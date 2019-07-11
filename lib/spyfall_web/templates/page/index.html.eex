@@ -1,17 +1,22 @@
 <div class="container mx-auto flex items-center h-screen align-center justify-center -mt-10">
   <div class="w-full mx-auto text-center">
-    <div class="w-full mb-4">
-      <h1 class="text-2xl font-light">Welcome to Spyfall</h1>
+    <div class="px-16 py-12 bg-white rounded shadow mx-auto max-w-sm w-sm">
+      <div class="mb-6">
+        <h1 class="text-2xl text-gray-900 font-light">Welcome to Spyfall</h1>
+      </div>
+      <div class="buttons mb-4">
+        <a href='<%= Routes.game_path(@conn, :new) %>'>
+          <button class="indigo-button">New Game</button>
+        </a>
+        <button class="indigo-button">Join Game</button>
+      </div>
+      <div class="rules mb-4">
+      </div>
     </div>
-    <div class="buttons">
-      <button
-              class="bg-transparent hover:bg-indigo-500 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded">New
-        Game</button>
-      <button
-              class="bg-transparent hover:bg-indigo-500 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded">
-        Join Game</button>
-    </div>
-    <div class="rules">
+    <div class="footer mt-6">
+      <p class="text-gray-700 text-sm">
+        made with &hearts; by <a href="https://avencera.com" class="underline">avencera</a>
+      </p>
     </div>
   </div>
 </div>

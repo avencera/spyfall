@@ -25,7 +25,8 @@ defmodule Spyfall.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.4.6"},
+      {:phoenix_ecto, "~> 4.0"},
+      {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
       {:phoenix_html, "~> 2.11"},
