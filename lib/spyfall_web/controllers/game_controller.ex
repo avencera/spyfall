@@ -14,7 +14,6 @@ defmodule SpyfallWeb.GameController do
         |> redirect(to: Routes.page_path(conn, :index))
 
      %{valid?: false} = changeset ->
-        IO.inspect(changeset)
         render(conn, "new.html", changeset: %{changeset | action: :insert})
     end
   end

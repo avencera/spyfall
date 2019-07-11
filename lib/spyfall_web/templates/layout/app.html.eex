@@ -14,9 +14,19 @@
       <section class="container">
       </section>
     </header>
-    <main role="main">
-      <%= render(@view_module, @view_template, assigns) %>
-    </main>
+    <div
+         class="container mx-auto flex items-center h-screen align-center justify-center -mt-10 flex-wrap">
+      <div class="w-full mx-auto text-center">
+        <main role="main">
+          <%= render(@view_module, @view_template, assigns) %>
+        </main>
+        <div class="footer mt-6">
+          <p class="text-gray-700 text-sm">
+            made with &hearts; by <a href="https://avencera.com" class="underline">avencera</a>
+          </p>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
 
 </html>
