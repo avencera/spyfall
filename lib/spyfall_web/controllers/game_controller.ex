@@ -1,13 +1,14 @@
 defmodule SpyfallWeb.GameController do
   use SpyfallWeb, :controller
   alias Spyfall.Game
+  alias Spyfall.Game.Player
 
   def new(conn, _params) do
     render(conn, "new.html", changeset: Game.Form.create_changeset(%{minutes: 10}))
   end
 
-  def join_new(conn, %{"id" => room_id}) do
-    render(conn, "join.html", changeset: Game.Form.join_changeset(%{room_id: room_id}))
+  def join_new(conn, %{"id" => game_id}) do
+    render(conn, "join.html", changeset: Game.Form.join_changeset(%{game_id: game_id}))
   end
 
   def join_new(conn, _params) do
@@ -38,7 +39,7 @@ defmodule SpyfallWeb.GameController do
     end
   end
 
-  def room(conn, %{"id" => room_id}) do
-    render(conn, "room.html", room_id: room_id)
+  def room(conn, %{"id" => game_id}) do
+    render(conn, "room.html", game_id: game_id)
   end
 end

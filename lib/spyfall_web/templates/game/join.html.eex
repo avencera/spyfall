@@ -2,14 +2,16 @@
   <div class="w-full mx-auto">
     <div class="mx-auto max-w-sm w-sm mb-4 text-left">
       <a href="/">
-        <h1 class="text-2xl text-gray-600 font-light hover:underline">Spyfall</h1>
+        <h1
+            class="text-2xl text-gray-600 font-light hover:underline">
+          Spyfall</h1>
       </a>
     </div>
     <div class="px-6 py-10 bg-white rounded shadow mx-auto max-w-sm w-sm text-left">
       <%= form_for @changeset, Routes.game_path(@conn, :join_create), fn f -> %>
       <div class="form mx-auto w-full justify-center">
         <div
-             class='flex items-center mx-auto w-full justify-center mb-8 flex-wrap <%= if Ecto.Changeset.get_field(@changeset, :room_id), do: "hidden", else: "" %>'>
+             class='flex items-center mx-auto w-full justify-center mb-8 flex-wrap <%= if Ecto.Changeset.get_field(@changeset, :game_id), do: "hidden", else: "" %>'>
           <div class="w-full">
             <label class="block text-gray-500 font-bold text-left mb-1 mb-0 pr-4"
                    for="inline-full-name">
@@ -17,10 +19,10 @@
             </label>
           </div>
           <div class="w-full">
-            <%= text_input f, :room_id, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: "a8JP" %>
+            <%= text_input f, :game_id, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: "a8JP" %>
           </div>
           <div class="w-full mt-2 text-sm text-red-600">
-            <%= error_tag(f, :room_id) %>
+            <%= error_tag(f, :game_id) %>
           </div>
         </div>
         <div class="flex items-center mb-8 mx-auto w-full justify-center flex-wrap">

@@ -4,7 +4,7 @@ defmodule Spyfall.Game.Form do
 
   embedded_schema do
     field :name, :string
-    field :room_id, :string
+    field :game_id, :string
     field :minutes, :integer
   end
 
@@ -16,7 +16,7 @@ defmodule Spyfall.Game.Form do
 
   def join_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:name, :room_id])
-    |> validate_required([:name, :room_id])
+    |> cast(attrs, [:name, :game_id])
+    |> validate_required([:name, :game_id])
   end
 end
