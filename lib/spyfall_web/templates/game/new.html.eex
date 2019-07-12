@@ -1,7 +1,9 @@
-<div class="container mx-auto flex items-center align-center justify-center -mt-10">
+<div class="container mx-auto flex items-center align-center justify-center">
   <div class="w-full mx-auto">
-    <div class="mx-auto max-w-sm w-sm mb-4 text-left mx-auto">
-      <h1 class="text-2xl text-gray-600 font-light">Spyfall</h1>
+    <div class="mx-auto max-w-sm w-sm mb-4 text-left">
+      <a href="/">
+        <h1 class="text-2xl text-gray-600 font-light hover:underline">Spyfall</h1>
+      </a>
     </div>
     <div class="px-6 py-10 bg-white rounded shadow mx-auto max-w-sm w-sm">
       <%= form_for @changeset, Routes.game_path(@conn, :create), fn f -> %>
@@ -16,7 +18,7 @@
           <div class="w-full">
             <%= text_input f, :name, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: "John Doe" %>
           </div>
-          <div class="w-full mt-2 text-sm text-red-600">
+          <div class="w-full mt-2 text-sm text-red-600 text-left">
             <%= error_tag(f, :name) %>
           </div>
         </div>

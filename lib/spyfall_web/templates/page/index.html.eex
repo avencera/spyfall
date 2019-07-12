@@ -4,9 +4,11 @@
   </div>
   <div class="buttons mb-4">
     <a href='<%= Routes.game_path(@conn, :new) %>'>
-      <button class="indigo-button">New Game</button>
+      <button class="indigo-button mr-2">New Game</button>
     </a>
-    <button class="indigo-button">Join Game</button>
+    <a href='<%= Routes.game_path(@conn, :join_new) %>'>
+      <button class="indigo-button">Join Game</button>
+    </a>
   </div>
   <div class="rules mb-4">
   </div>

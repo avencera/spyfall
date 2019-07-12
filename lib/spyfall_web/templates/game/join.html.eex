@@ -1,0 +1,48 @@
+<div class="container mx-auto flex items-center align-center justify-center">
+  <div class="w-full mx-auto">
+    <div class="mx-auto max-w-sm w-sm mb-4 text-left">
+      <a href="/">
+        <h1 class="text-2xl text-gray-600 font-light hover:underline">Spyfall</h1>
+      </a>
+    </div>
+    <div class="px-6 py-10 bg-white rounded shadow mx-auto max-w-sm w-sm text-left">
+      <%= form_for @changeset, Routes.game_path(@conn, :join_create), fn f -> %>
+      <div class="form mx-auto w-full justify-center">
+        <div class="flex items-center mx-auto w-full justify-center mb-8 flex-wrap">
+          <div class="w-full">
+            <label class="block text-gray-500 font-bold text-left mb-1 mb-0 pr-4"
+                   for="inline-full-name">
+              Room Code
+            </label>
+          </div>
+          <div class="w-full">
+            <%= text_input f, :room_id, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: "a8JP" %>
+          </div>
+          <div class="w-full mt-2 text-sm text-red-600">
+            <%= error_tag(f, :room_id) %>
+          </div>
+        </div>
+        <div class="flex items-center mb-8 mx-auto w-full justify-center flex-wrap">
+          <div class="w-full">
+            <label class="block text-gray-500 font-bold text-left mb-1 mb-0 pr-4">
+              Name
+            </label>
+          </div>
+          <div class="w-full">
+            <%= text_input f, :name, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: "John Doe" %>
+          </div>
+          <div class="w-full mt-2 text-sm text-red-600">
+            <%= error_tag(f, :name) %>
+          </div>
+        </div>
+        <div class="flex mt-4">
+          <div class="flex w-full justify-end items-center">
+            <a href="/"
+               class="text-left uppercase text-sm mr-4 text-gray-500 font-bold underline">Back</a>
+            <%= submit "Join Game", class: "indigo-button text-right uppercase text-sm" %>
+          </div>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
