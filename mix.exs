@@ -28,6 +28,7 @@ defmodule Spyfall.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
+      {:distributed_kv, github: "avencera/distributed_kv"},
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
