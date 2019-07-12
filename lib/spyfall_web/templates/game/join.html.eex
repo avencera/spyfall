@@ -8,7 +8,8 @@
     <div class="px-6 py-10 bg-white rounded shadow mx-auto max-w-sm w-sm text-left">
       <%= form_for @changeset, Routes.game_path(@conn, :join_create), fn f -> %>
       <div class="form mx-auto w-full justify-center">
-        <div class="flex items-center mx-auto w-full justify-center mb-8 flex-wrap">
+        <div
+             class='flex items-center mx-auto w-full justify-center mb-8 flex-wrap <%= if Ecto.Changeset.get_field(@changeset, :room_id), do: "hidden", else: "" %>'>
           <div class="w-full">
             <label class="block text-gray-500 font-bold text-left mb-1 mb-0 pr-4"
                    for="inline-full-name">
