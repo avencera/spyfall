@@ -16,17 +16,23 @@ defmodule SpyfallWeb.GameController do
   end
 
   def create(conn, %{"form" => params}) do
-    case Game.Form.create_changeset(params) do
-      %{valid?: true} ->
+    with %{valid?: true} <- Game.Form.create_changeset(params),
+          %Player{} = player <- %Player{name: params["name"]}
+         {:ok, %Game{} = game} <- Game.create_game(params["game_id"], player)
+     do
         conn
-        |> put_flash(:info, "Product created successfully.")
-        |> redirect(to: Routes.page_path(conn, :index))
-
+        |> put_session(conn, :game, game)
+        |> put_session(conn, :player, player)
+        |> redirect(to: Routes.game_path(conn, :room))
+     else
      %{valid?: false} = changeset ->
         render(conn, "new.html", changeset: %{changeset | action: :insert})
     end
   end
 
+  def room(conn, params) do
+
+  end
 
   def join_create(conn, %{"form" => params}) do
     case Game.Form.join_changeset(params) do
