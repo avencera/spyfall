@@ -61,7 +61,10 @@ defmodule SpyfallWeb.GameController do
          {%Player{} = player, _} <- {get_session(conn, :player), :player} do
       render(conn, "room.html", player: player, game: game)
     else
-      _ -> redirect(conn, to: Routes.page_path(conn, :index))
+      _ ->
+        conn
+        |> clear_session()
+        |> redirect(to: Routes.page_path(conn, :index))
     end
   end
 
