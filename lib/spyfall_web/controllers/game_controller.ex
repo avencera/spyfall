@@ -58,7 +58,8 @@ defmodule SpyfallWeb.GameController do
   def room(conn, _params) do
     with {%Game{} = game, _} <- {get_session(conn, :game), :game},
          {:ok, game} <- Game.get(game.id),
-         {%Player{} = player, _} <- {get_session(conn, :player), :player} do
+         {%Player{} = player, _} <- {get_session(conn, :player), :player},
+         true <- Game.game_has_player?(game, player) do
       render(conn, "room.html", player: player, game: game)
     else
       _ ->
