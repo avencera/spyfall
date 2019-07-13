@@ -6,8 +6,8 @@ defmodule Spyfall.Game.Registry do
     GenServer.call(@name, :dump)
   end
 
-  def register_game(%Game{} = game) do
-    GenServer.cast(@name, {:insert, game.game_id, game})
+  def register_or_replace_game(%Game{} = game) do
+    GenServer.cast(@name, {:insert, game.id, game})
   end
 
   def get_game(game_id) do
@@ -15,5 +15,9 @@ defmodule Spyfall.Game.Registry do
       [{^game_id, %Game{} = game}] -> {:ok, game}
       _ -> :not_found
     end
+  end
+
+  def delete_game(game) do
+    GenServer.cast(@name, {:delete, game.id})
   end
 end

@@ -3,26 +3,22 @@ defmodule Spyfall.Game do
   alias Spyfall.Game.{Player, Registry}
 
   # state = :waiting | :in_progress | :ended
-  @enforce_keys [:game_id, :state]
-  defstruct [:game_id, players: [], state: :waiting]
+  @enforce_keys [:id, :state]
+  defstruct [:id, players: [], state: :waiting]
+
+  def get(%Game{} = game), do: get(game.id)
+  def get(game_id), do: Registry.get_game(game_id)
 
   def create(%Player{} = player) do
     game_id = generate_game_id()
 
-    case Registry.get_game(game_id) do
-      :not_found -> {:ok, %Game{game_id: game_id, state: :waiting, players: [player]}}
-      {:ok, _game} -> create(player)
-    end
-  end
-
-  def join(game_id, player_name) do
-    case Registry.get_game(game_id) do
-      {:ok, game} ->
-        player = Player.create(player_name)
-        add_player(game, player)
-
-      :not_found ->
-        {:error, "Game does not exist"}
+    with :not_found <- get(game_id),
+         game <- %Game{id: game_id, state: :waiting, players: [player]},
+         :ok <- Registry.register_or_replace_game(game) do
+      {:ok, game}
+    else
+      _ ->
+        create(player)
     end
   end
 
@@ -34,9 +30,23 @@ defmodule Spyfall.Game do
     {:ok, %{game | state: :ended}}
   end
 
+  def delete(%Game{} = game), do: Registry.delete_game(game)
+
+  def join(game_id, player_name) do
+    with {:ok, game} <- get(game_id),
+         %Player{} = player <- Player.create(player_name),
+         {:ok, game, player} <- add_player(game, player),
+         :ok <- Registry.register_or_replace_game(game) do
+      {:ok, game, player}
+    else
+      _ ->
+        {:error, "Game does not exist"}
+    end
+  end
+
   def add_player(%Game{} = game, %Player{} = player) do
     case game_has_player?(game, player) do
-      false -> {:ok, %{game | players: [player | game.players]}}
+      false -> {:ok, %{game | players: [player | game.players]}, player}
       true -> {:error, "Player is already in the game"}
     end
   end
@@ -47,7 +57,7 @@ defmodule Spyfall.Game do
   end
 
   def can_player_enter_game_room?(game, player) do
-    with {:ok, game} <- Registry.get_game(game.id),
+    with {:ok, game} <- get(game.id),
          true <- game_has_player?(game, player) do
       true
     else
