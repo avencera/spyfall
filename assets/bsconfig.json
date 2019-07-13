@@ -1,20 +1,22 @@
 {
-  "name": "react-hooks-template",
-  "reason": {
-    "react-jsx": 3
-  },
-  "sources": {
-    "dir": "js/react",
-    "subdirs": true
-  },
+  "name": "spyfall",
+  "reason": { "react-jsx": 3 },
+  "bsc-flags": ["-bs-super-errors"],
+  "sources": [
+    {
+      "dir": "js/react",
+      "subdirs": true
+    }
+  ],
   "package-specs": [
     {
-      "module": "commonjs",
+      "module": "es6",
       "in-source": true
     }
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react"],
+  "bs-dependencies": ["reason-react", "@glennsl/bs-json"],
+  "ppx-flags": [],
   "refmt": 3
 }
