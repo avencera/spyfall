@@ -26,6 +26,7 @@ defmodule Spyfall.MixProject do
   defp deps do
     [
       {:phoenix_ecto, "~> 4.0"},
+      {:base58, "~> 0.1.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:distributed_kv, github: "avencera/distributed_kv"},

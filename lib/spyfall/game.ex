@@ -3,7 +3,8 @@ defmodule Spyfall.Game do
   alias Spyfall.Game.{Player, Registry}
 
   # state = :waiting | :in_progress | :ended
-  defstruct [:game_id, players: [%Player{}], state: :waiting]
+  @enforce_keys [:game_id, :state]
+  defstruct [:game_id, players: [], state: :waiting]
 
   def create_game(game_id, %Player{}) do
     {:ok, %Game{game_id: game_id, state: :waiting, players: [player]}}
@@ -32,4 +33,11 @@ defmodule Spyfall.Game do
     {:ok, %{game | players: players}}
   end
 
+  defp generate_game_id() do
+    1..4
+    |> Enum.map(fn _x -> :rand.uniform(58) end)
+    |> Enum.map(&Base58.encode/1)
+    |> Enum.join()
+    |> binary_part(0, 4)
+  end
 end
