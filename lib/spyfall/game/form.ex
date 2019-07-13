@@ -3,9 +3,9 @@ defmodule Spyfall.Game.Form do
   import Ecto.Changeset
 
   embedded_schema do
-    field :name, :string
-    field :game_id, :string
-    field :minutes, :integer
+    field(:name, :string)
+    field(:game_id, :string)
+    field(:minutes, :integer)
   end
 
   def create_changeset(attrs) do

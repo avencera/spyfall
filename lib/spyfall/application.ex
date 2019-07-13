@@ -5,7 +5,7 @@ defmodule Spyfall.Application do
   def start(_type, _args) do
     children = [
       SpyfallWeb.Endpoint,
-      Supervisor.child_spec({DistributedKV, Spyfall.Game.Registry}, id: :game_registry)
+      {DistributedKV.Server, [name: Spyfall.Game.Registry]}
     ]
 
     opts = [strategy: :one_for_one, name: Spyfall.Supervisor]

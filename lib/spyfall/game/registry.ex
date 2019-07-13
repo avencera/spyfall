@@ -12,9 +12,8 @@ defmodule Spyfall.Game.Registry do
 
   def get_game(game_id) do
     case :ets.lookup(@name, game_id) do
-      [{^game_id, %Game{} = game }] -> {:ok, game}
-      _ -> {:error, :not_found}
+      [{^game_id, %Game{} = game}] -> {:ok, game}
+      _ -> :not_found
     end
   end
-
 end

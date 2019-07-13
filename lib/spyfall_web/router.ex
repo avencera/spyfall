@@ -20,12 +20,12 @@ defmodule SpyfallWeb.Router do
 
     resources "/game", GameController, only: [:new, :create]
 
-
     get "/game/join/", GameController, :join_new
     get "/game/join/:id", GameController, :join_new
     post "/game/join", GameController, :join_create
 
+    get "/game/room/", GameController, :room
+
     get "/game/:id", GameController, :room
   end
-
 end
