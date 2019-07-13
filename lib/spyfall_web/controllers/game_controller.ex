@@ -30,7 +30,7 @@ defmodule SpyfallWeb.GameController do
     end
   end
 
-  def join_new(conn, _params) do
+  def join_new(conn, %{"join_previous" => _}) do
     case session_game_and_player(conn) do
       {:ok, %Game{}, %Player{}} ->
         redirect(conn, to: Routes.game_path(conn, :room))
@@ -38,6 +38,10 @@ defmodule SpyfallWeb.GameController do
       _ ->
         render(conn, "join.html", changeset: Game.Form.join_changeset(%{}))
     end
+  end
+
+  def join_new(conn, _params) do
+    render(conn, "join.html", changeset: Game.Form.join_changeset(%{}))
   end
 
   def join_create(conn, %{"form" => params}) do

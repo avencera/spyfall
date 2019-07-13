@@ -2,7 +2,14 @@
   <div class="mb-6">
     <h1 class="text-2xl text-gray-900 font-light">Welcome to Spyfall</h1>
   </div>
-  <div class="buttons mb-4">
+  <%= if(@in_game?) do %>
+  <div class="mb-4">
+    <a href='<%= Routes.game_path(@conn, :join_new, join_previous: true) %>'>
+      <button class="indigo-button w-3/4">Join Previous Game</button>
+    </a>
+  </div>
+  <% end %>
+  <div class="buttons mb-4 ">
     <a href='<%= Routes.game_path(@conn, :new) %>'>
       <button class="indigo-button mr-2">New Game</button>
     </a>
