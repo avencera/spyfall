@@ -1,3 +1,4 @@
+# elixir
 /_build/
 /cover/
 /deps/
@@ -6,7 +7,24 @@
 erl_crash.dump
 *.ez
 spyfall-*.tar
+
+# assets
 npm-debug.log
 /assets/node_modules/
 /priv/static/
+
+# bucklescript
+**/*.bs.js
+assets/yarn-error.log
+assets/.bsb.lock
+assets/.merlin
+assets/lib/bs/*
+*.cmi
+*.cmj
+*.cmt
+*.mlast
+*.d
+
+# IDE
 .elixir_ls
+.lsp

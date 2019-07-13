@@ -16,7 +16,9 @@
       <h2> ID: <%= player.id  %> </h2>
       <% end %>
 
-      <div id="react"></div>
+      <div id="react-flags"></div>
+      <div id="react-root"></div>
+
     </div>
   </div>
 
