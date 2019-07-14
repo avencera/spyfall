@@ -10,7 +10,7 @@ defmodule SpyfallWeb.GameController do
   def create(conn, %{"form" => params}) do
     with %{valid?: true} <- Game.Form.create_changeset(params),
          %Player{} = player <- Player.create(params["name"]),
-         {:ok, %Game{} = game} <- Game.create(player) do
+         {:ok, %Game{} = game} <- Game.create(player, params["minutes"]) do
       conn
       |> put_session(:game, game)
       |> put_session(:player, player)

@@ -23,7 +23,7 @@ module Decode = {
       id: field("id", string, json),
       minutes: field("minutes", int, json),
       status: field("status", string, json)->stringToStatus,
-      players: field("player", Player.Decode.players, json),
+      players: field("players", Player.Decode.players, json),
     };
 
   let game = gameDecoder;

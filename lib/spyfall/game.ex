@@ -3,23 +3,27 @@ defmodule Spyfall.Game do
   alias Spyfall.Game.{Player, Registry}
 
   # status = :waiting | :in_progress | :ended
-  @enforce_keys [:id, :players, :status]
-  defstruct [:id, players: [], status: :waiting]
+  @enforce_keys [:id, :players, :status, :minutes]
   @derive Jason.Encoder
+  defstruct [:id, players: [], status: :waiting, minutes: 10]
 
   def get(%Game{} = game), do: get(game.id)
   def get(game_id), do: Registry.get_game(game_id)
 
-  def create(%Player{} = player) do
+  def create(player, minutes) when is_binary(minutes) do
+    create(player, String.to_integer(minutes))
+  end
+
+  def create(%Player{} = player, minutes) do
     game_id = generate_game_id()
 
     with :not_found <- get(game_id),
-         game <- %Game{id: game_id, status: :waiting, players: [player]},
+         game <- %Game{id: game_id, status: :waiting, players: [player], minutes: minutes},
          :ok <- Registry.register_or_replace_game(game) do
       {:ok, game}
     else
       _ ->
-        create(player)
+        create(player, minutes)
     end
   end
 
