@@ -77,5 +77,6 @@ defmodule Spyfall.Game do
     |> Enum.map(&Base58.encode/1)
     |> Enum.join()
     |> binary_part(0, 4)
+    |> String.upcase()
   end
 end
