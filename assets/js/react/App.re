@@ -50,6 +50,6 @@ let make = (~flags: Js.Json.t) => {
 
   switch (state.game) {
   | None => <div> {React.string("Loading...")} </div>
-  | Some(game) => <GameView game />
+  | Some(game) => <RoomComponent game player={state.player} />
   };
 };

@@ -19,7 +19,7 @@ defmodule SpyfallWeb.GameChannel do
 
   def handle_info({:send_game, game_id}, socket) do
     case Game.get(game_id) do
-      {:ok, game} -> push(socket, "new_game", game)
+      {:ok, game} -> broadcast(socket, "new_game", game)
       _ -> socket
     end
 
