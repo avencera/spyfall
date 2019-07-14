@@ -1,10 +1,10 @@
 type state = {
-  game_id: string,
+  gameId: string,
   player: Player.t,
 };
 
 let initialState = (flags: Flags.t): state => {
-  game_id: flags.game_id,
+  gameId: flags.gameId,
   player: flags.player,
 };
 
@@ -23,6 +23,14 @@ let make = (~flags: Js.Json.t) => {
         },
       initialState(lists),
     );
+
+  React.useEffect1(
+    () => {
+      Phoenix.joinChannel(state.gameId, state.player.id);
+      None;
+    },
+    [||],
+  );
 
   <div />;
 };

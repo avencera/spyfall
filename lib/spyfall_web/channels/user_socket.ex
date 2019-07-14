@@ -2,7 +2,7 @@ defmodule SpyfallWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", SpyfallWeb.RoomChannel
+  channel "game:*", SpyfallWeb.GameChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -15,7 +15,7 @@ defmodule SpyfallWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
+  def connect(params, socket, connect_info) do
     {:ok, socket}
   end
 
