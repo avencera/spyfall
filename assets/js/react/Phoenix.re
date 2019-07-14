@@ -1,17 +1,22 @@
-open Phx;
-
 let socket =
-  initSocket("/socket")
-  |> connectSocket
-  |> putOnClose(() => Js.log("Socket closed"));
+  Phx.initSocket("/socket")
+  |> Phx.connectSocket
+  |> Phx.putOnClose(() => Js.log("Socket closed"));
 
-let joinChannel = (gameId: string, playerId: string) => {
+let handleReceive = (event, any) =>
+  switch (event) {
+  | "ok" => Js.log(("handleReiceive:" ++ any, "Joined"))
+  | "error" => Js.log(("handleReiceive:" ++ event, "Failed to join channel"))
+  | _ => Js.log(("handleReiceive:" ++ event, any))
+  };
+
+let joinChannel = (gameId: string, playerId: string, updateGame) => {
   let channel =
-    initChannel(
+    Phx.initChannel(
       "game:" ++ gameId,
       ~chanParams={"player_id": playerId},
       socket,
     );
-  let _ = joinChannel(channel);
-  ();
+  let _ = Phx.joinChannel(channel);
+  channel;
 };

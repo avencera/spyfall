@@ -1,32 +1,45 @@
 type state = {
   gameId: string,
   player: Player.t,
+  game: option(Game.t),
+  channel: option(Phx_channel.t),
 };
 
 let initialState = (flags: Flags.t): state => {
   gameId: flags.gameId,
   player: flags.player,
+  game: None,
+  channel: None,
 };
 
 type action =
-  | Next;
+  | UpdateChannel(Phx_channel.t)
+  | UpdateGame(Game.t);
 
 [@react.component]
 let make = (~flags: Js.Json.t) => {
-  let lists = Flags.Decode.flags(flags);
+  let flags = Flags.Decode.flags(flags);
 
   let (state: state, dispatch: action => unit) =
     React.useReducer(
       (state: state, action: action) =>
         switch (action) {
-        | Next => state
+        | UpdateGame(game) => {...state, game: Some(game)}
+        | UpdateChannel(channel) => {...state, channel: Some(channel)}
         },
-      initialState(lists),
+      initialState(flags),
     );
+
+  let updateGame = (game: Game.t) => {
+    dispatch(UpdateGame(game));
+  };
 
   React.useEffect1(
     () => {
-      Phoenix.joinChannel(state.gameId, state.player.id);
+      let channel =
+        Phoenix.joinChannel(state.gameId, state.player.id, updateGame);
+
+      dispatch(UpdateChannel(channel));
       None;
     },
     [||],
