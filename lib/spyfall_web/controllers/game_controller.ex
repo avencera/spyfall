@@ -48,14 +48,31 @@ defmodule SpyfallWeb.GameController do
     changeset = Game.Form.join_changeset(params)
 
     with %{valid?: true} <- changeset,
-         {:ok, game, player} <- Game.add_player(params["game_id"], params["name"]) do
+         {:ok, game} <- Game.get(params["game_id"]),
+         {:ok, game, player} <- Game.add_player(game, params["name"]) do
       conn
       |> put_session(:game, game)
       |> put_session(:player, player)
       |> redirect(to: Routes.game_path(conn, :room))
     else
-      _error ->
-        render(conn, "join.html", changeset: %{changeset | action: :insert})
+      :not_found ->
+        changeset =
+          %{name: params["name"]}
+          |> Game.Form.join_changeset()
+          |> Map.put(:action, :insert)
+
+        conn
+        |> put_flash(:error, "A game with that ID was not found, please try again")
+        |> render("join.html", changeset: changeset)
+
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, msg)
+        |> render("join.html", changeset: %{changeset | action: :insert})
+
+      _ ->
+        conn
+        |> render("join.html", changeset: %{changeset | action: :insert})
     end
   end
 

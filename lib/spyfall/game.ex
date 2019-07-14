@@ -56,8 +56,17 @@ defmodule Spyfall.Game do
          :ok <- Registry.register_or_replace_game(game) do
       {:ok, game, player}
     else
+      :in_progress ->
+        {:error, "That game is already in progress"}
+
+      :finished ->
+        {:error, "That game has already finished"}
+
+      :not_found ->
+        {:error, "A game with that ID was not found, please try again"}
+
       _ ->
-        {:error, "Unable to add player"}
+        {:error, "Unknown error, please contact us"}
     end
   end
 
