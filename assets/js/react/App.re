@@ -7,7 +7,10 @@ type state = {
 
 let initialState = (flags: Flags.t): state => {
   gameId: flags.gameId,
-  player: flags.player,
+  player: {
+    ...flags.player,
+    role: flags.role,
+  },
   game: None,
   channel: None,
 };
@@ -45,5 +48,8 @@ let make = (~flags: Js.Json.t) => {
     [||],
   );
 
-  <div />;
+  switch (state.game) {
+  | None => <div> {React.string("Loading...")} </div>
+  | Some(game) => <GameView game />
+  };
 };

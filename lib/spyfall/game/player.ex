@@ -2,8 +2,8 @@ defmodule Spyfall.Game.Player do
   alias Spyfall.Game.Player
 
   # role = :member | :spy
-  @derive Jason.Encoder
-  @enforce_keys [:id, :name, :role]
+  @derive {Jason.Encoder, only: [:id, :name]}
+  @enforce_keys [:id, :name]
   defstruct [:id, :name, role: :member]
 
   def create(name) do

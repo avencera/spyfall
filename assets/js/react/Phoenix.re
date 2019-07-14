@@ -3,12 +3,9 @@ let socket =
   |> Phx.connectSocket
   |> Phx.putOnClose(() => Js.log("Socket closed"));
 
-let handleReceive = (event, any) =>
-  switch (event) {
-  | "ok" => Js.log(("handleReiceive:" ++ any, "Joined"))
-  | "error" => Js.log(("handleReiceive:" ++ event, "Failed to join channel"))
-  | _ => Js.log(("handleReiceive:" ++ event, any))
-  };
+let handleEvent = (updateGame, _event, response) => {
+  response->Game.Decode.game->updateGame;
+};
 
 let joinChannel = (gameId: string, playerId: string, updateGame) => {
   let channel =
@@ -17,6 +14,10 @@ let joinChannel = (gameId: string, playerId: string, updateGame) => {
       ~chanParams={"player_id": playerId},
       socket,
     );
-  let _ = Phx.joinChannel(channel);
+  let _ =
+    channel
+    |> Phx.putOn("new_game", handleEvent(updateGame, "new_game"))
+    |> Phx.joinChannel;
+
   channel;
 };

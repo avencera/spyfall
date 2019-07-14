@@ -1,21 +1,28 @@
 defmodule SpyfallWeb.GameChannel do
   use SpyfallWeb, :channel
 
-  def join("game:" <> game_id, payload, socket) do
-    IO.inspect(payload, label: "PAYLOAD")
-    {:ok, socket}
+  alias Spyfall.Game
+
+  def join("game:" <> game_id, %{"player_id" => player_id}, socket) do
+    send(self(), {:send_game, game_id})
+    {:ok, assign(socket, :player_id, player_id)}
   end
 
-  # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
   def handle_in("ping", payload, socket) do
     {:reply, {:ok, payload}, socket}
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (room:lobby).
   def handle_in("shout", payload, socket) do
     broadcast(socket, "shout", payload)
+    {:noreply, socket}
+  end
+
+  def handle_info({:send_game, game_id}, socket) do
+    case Game.get(game_id) do
+      {:ok, game} -> push(socket, "new_game", game)
+      _ -> socket
+    end
+
     {:noreply, socket}
   end
 end

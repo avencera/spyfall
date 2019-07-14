@@ -64,7 +64,7 @@ defmodule SpyfallWeb.GameController do
          {:ok, game} <- Game.get(game.id),
          {%Player{} = player, _} <- {get_session(conn, :player), :player},
          true <- Game.game_has_player?(game, player) do
-      data_json = Jason.encode!(%{player: player, game_id: game.id})
+      data_json = Jason.encode!(%{player: player, game_id: game.id, role: player.role})
 
       render(conn, "room.html", data: data_json)
     else

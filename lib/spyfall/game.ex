@@ -5,6 +5,7 @@ defmodule Spyfall.Game do
   # status = :waiting | :in_progress | :ended
   @enforce_keys [:id, :players, :status]
   defstruct [:id, players: [], status: :waiting]
+  @derive Jason.Encoder
 
   def get(%Game{} = game), do: get(game.id)
   def get(game_id), do: Registry.get_game(game_id)
