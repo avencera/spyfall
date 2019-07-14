@@ -37,29 +37,31 @@ defmodule Spyfall.Game do
 
   def delete(%Game{} = game), do: Registry.delete_game(game)
 
-  def join(game_id, player_name) do
+  def add_player(game_id, player_name) do
     with {:ok, game} <- get(game_id),
          :waiting <- game.status,
          %Player{} = player <- Player.create(player_name),
-         {:ok, game, player} <- add_player(game, player),
+         false <- game_has_player?(game, player),
+         game <- %{game | players: [player | game.players]},
          :ok <- Registry.register_or_replace_game(game) do
       {:ok, game, player}
     else
       _ ->
-        {:error, "Game does not exist"}
+        {:error, "Unable to add player"}
     end
   end
 
-  def add_player(%Game{} = game, %Player{} = player) do
-    case game_has_player?(game, player) do
-      false -> {:ok, %{game | players: [player | game.players]}, player}
-      true -> {:error, "Player is already in the game"}
+  def remove_player(game_id, player_id) do
+    with {:ok, game} <- get(game_id),
+         :waiting <- game.status,
+         players <- Enum.reject(game.players, &(&1.id == player_id)),
+         game <- %{game | players: players},
+         :ok <- Registry.register_or_replace_game(game) do
+      {:ok, game}
+    else
+      _ ->
+        {:error, "Unable to add player"}
     end
-  end
-
-  def remove_player(%Game{} = game, %Player{} = player) do
-    players = Enum.reject(game.players, &(&1.name == player.name))
-    {:ok, %{game | players: players}}
   end
 
   def game_has_player?(game, player) do

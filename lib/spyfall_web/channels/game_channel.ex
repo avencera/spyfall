@@ -5,15 +5,21 @@ defmodule SpyfallWeb.GameChannel do
 
   def join("game:" <> game_id, %{"player_id" => player_id}, socket) do
     send(self(), {:send_game, game_id})
-    {:ok, assign(socket, :player_id, player_id)}
+
+    socket =
+      socket
+      |> assign(:player_id, player_id)
+      |> assign(:game_id, game_id)
+
+    {:ok, socket}
   end
 
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
-  end
+  def handle_in("remove_player", %{"player_id" => player_id}, socket) do
+    case Game.remove_player(socket.assigns.game_id, player_id) do
+      {:ok, new_game} -> broadcast(socket, "new_game", new_game)
+      _ -> :nothing
+    end
 
-  def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
     {:noreply, socket}
   end
 

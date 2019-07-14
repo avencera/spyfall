@@ -48,8 +48,13 @@ let make = (~flags: Js.Json.t) => {
     [||],
   );
 
-  switch (state.game) {
-  | None => <div> {React.string("Loading...")} </div>
-  | Some(game) => <RoomComponent game player={state.player} />
+  switch (state.game, state.channel) {
+  | (None, None)
+  | (None, _)
+  | (_, None) => <div> {React.string("Loading...")} </div>
+  | (Some(game), Some(channel)) =>
+    <ChannelContextProvider channel>
+      <RoomComponent game player={state.player} />
+    </ChannelContextProvider>
   };
 };
