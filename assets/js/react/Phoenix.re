@@ -29,3 +29,11 @@ let pushMessage = (event: string, message: Js.t('a), channel: Phx_channel.t) => 
 let removePlayer = (player_id: string, channel: Phx_channel.t) => {
   pushMessage("remove_player", {"player_id": player_id}, channel);
 };
+
+let startGame = (channel: Phx_channel.t) => {
+  pushMessage("start_game", Js.Obj.empty(), channel);
+};
+
+let endGame = (channel: Phx_channel.t) => {
+  pushMessage("end_game", Js.Obj.empty(), channel);
+};

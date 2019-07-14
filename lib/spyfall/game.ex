@@ -2,7 +2,7 @@ defmodule Spyfall.Game do
   alias Spyfall.Game
   alias Spyfall.Game.{Player, Registry}
 
-  # status = :waiting | :in_progress | :ended
+  # status = :waiting | :in_progress | :finished
   @enforce_keys [:id, :players, :status, :minutes]
   @derive Jason.Encoder
   defstruct [:id, players: [], status: :waiting, minutes: 10]
@@ -27,12 +27,22 @@ defmodule Spyfall.Game do
     end
   end
 
-  def start(%Game{} = game) do
-    {:ok, %{game | status: :in_progress}}
+  def start(%Game{} = game), do: {:ok, %{game | status: :in_progress}}
+
+  def start(game_id) when is_binary(game_id) do
+    case get(game_id) do
+      {:ok, game} -> start(game)
+      :not_found -> {:error, "Game not found"}
+    end
   end
 
-  def finish(%Game{} = game) do
-    {:ok, %{game | status: :ended}}
+  def finish(%Game{} = game), do: {:ok, %{game | status: :finished}}
+
+  def finish(game_id) when is_binary(game_id) do
+    case get(game_id) do
+      {:ok, game} -> finish(game)
+      :not_found -> {:error, "Game not found"}
+    end
   end
 
   def delete(%Game{} = game), do: Registry.delete_game(game)

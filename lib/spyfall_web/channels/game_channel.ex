@@ -23,6 +23,24 @@ defmodule SpyfallWeb.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("start_game", _, socket) do
+    case Game.start(socket.assigns.game_id) do
+      {:ok, new_game} -> broadcast(socket, "new_game", new_game)
+      _ -> :nothing
+    end
+
+    {:noreply, socket}
+  end
+
+  def handle_in("finished_game", _, socket) do
+    case Game.finish(socket.assigns.game_id) do
+      {:ok, new_game} -> broadcast(socket, "new_game", new_game)
+      _ -> :nothing
+    end
+
+    {:noreply, socket}
+  end
+
   def handle_info({:send_game, game_id}, socket) do
     case Game.get(game_id) do
       {:ok, game} -> broadcast(socket, "new_game", game)
