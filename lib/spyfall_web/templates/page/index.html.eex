@@ -4,7 +4,7 @@
   </div>
   <%= if(@in_game?) do %>
   <div class="mb-4">
-    <a href='<%= Routes.game_path(@conn, :join_new, join_previous: true) %>'>
+    <a href='<%= Routes.game_path(@conn, :room) %>'>
       <button class="indigo-button w-3/4">Join Previous Game</button>
     </a>
   </div>

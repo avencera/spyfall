@@ -51,7 +51,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
         {React.string("Room Code: " ++ game.id)}
       </h3>
       <p className="text-sm text-gray-600 pt-1">
-        {React.string("https://spyfall.avencera.com/join/" ++ game.id)}
+        {React.string("https://spyfall.avencera.com/" ++ game.id)}
       </p>
     </div>
     <div className="mb-4 text-left">

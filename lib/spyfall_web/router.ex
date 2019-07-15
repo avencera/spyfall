@@ -26,5 +26,7 @@ defmodule SpyfallWeb.Router do
     post "/join", GameController, :join_create
 
     get "/room/", GameController, :room
+
+    get "/:id", GameController, :join_new
   end
 end
