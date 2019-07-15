@@ -27,7 +27,11 @@ defmodule Spyfall.Game do
     end
   end
 
-  def start(%Game{} = game), do: {:ok, %{game | status: :in_progress}}
+  def start(%Game{} = game) do
+    game = %{game | status: :in_progress}
+    Registry.register_or_replace_game(game)
+    {:ok, game}
+  end
 
   def start(game_id) when is_binary(game_id) do
     case get(game_id) do
@@ -36,7 +40,11 @@ defmodule Spyfall.Game do
     end
   end
 
-  def finish(%Game{} = game), do: {:ok, %{game | status: :finished}}
+  def finish(%Game{} = game) do
+    game = %{game | status: :finished}
+    Registry.register_or_replace_game(game)
+    {:ok, game}
+  end
 
   def finish(game_id) when is_binary(game_id) do
     case get(game_id) do
