@@ -38,7 +38,7 @@ defmodule Spyfall.Game do
   end
 
   def start(%Game{} = game) do
-    game = %{game | status: :in_progress}
+    game = %{game | status: :in_progress, players: Enum.shuffle(game.players)}
     Registry.register_or_replace_game(game)
     {:ok, game}
   end
