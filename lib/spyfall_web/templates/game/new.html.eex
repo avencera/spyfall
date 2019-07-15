@@ -32,6 +32,20 @@
             <%= number_input f, :minutes, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", placeholder: 8 %>
           </div>
         </div>
+        <div class="flex items-center mx-auto w-full justify-center mb-8 flex-wrap">
+          <div class="w-full">
+            <label class="block text-gray-500 font-bold text-left mb-1 mb-0 pr-4"
+                   for="inline-full-name">
+              Number of Locations
+            </label>
+          </div>
+          <div class="w-full">
+            <%= number_input f, :number_of_locations, class: "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500", min: 10, max: 48 %>
+          </div>
+          <div class="w-full mt-2 text-sm text-red-600 text-left">
+            <%= error_tag(f, :number_of_locations) %>
+          </div>
+        </div>
         <div class="mt-4">
           <%= submit "Create Game", class: "indigo-button text-center w-full uppercase text-sm" %>
         </div>

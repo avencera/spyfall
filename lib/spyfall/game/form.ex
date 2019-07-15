@@ -6,12 +6,13 @@ defmodule Spyfall.Game.Form do
     field(:name, :string)
     field(:game_id, :string)
     field(:minutes, :integer)
+    field(:number_of_locations, :integer)
   end
 
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:name, :minutes])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :minutes, :number_of_locations])
+    |> validate_required([:name, :minutes, :number_of_locations])
   end
 
   def join_changeset(attrs) do

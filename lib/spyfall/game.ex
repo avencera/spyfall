@@ -10,11 +10,15 @@ defmodule Spyfall.Game do
   def get(%Game{} = game), do: get(game.id)
   def get(game_id), do: Registry.get_game(game_id)
 
-  def create(player, minutes) when is_binary(minutes) do
-    create(player, String.to_integer(minutes))
+  def create(player, minutes, number_of_locations) when is_binary(minutes) do
+    create(player, String.to_integer(minutes), number_of_locations)
   end
 
-  def create(%Player{} = player, minutes) do
+  def create(player, minutes, number_of_locations) when is_binary(number_of_locations) do
+    create(player, minutes, String.to_integer(number_of_locations))
+  end
+
+  def create(%Player{} = player, minutes, number_of_locations) do
     game_id = generate_game_id()
 
     with :not_found <- get(game_id),
@@ -23,13 +27,13 @@ defmodule Spyfall.Game do
            status: :waiting,
            players: [player],
            minutes: minutes,
-           locations: Locations.all()
+           locations: Locations.all(number_of_locations)
          },
          :ok <- Registry.register_or_replace_game(game) do
       {:ok, game}
     else
       _ ->
-        create(player, minutes)
+        create(player, minutes, number_of_locations)
     end
   end
 

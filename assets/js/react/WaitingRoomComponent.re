@@ -3,7 +3,7 @@ let renderPlayer = (index: int, player: Player.t, channel) => {
 
   let backgroundColor = index mod 2 == 0 ? "bg-gray-100" : "bg-white";
 
-  <li className={"py-4 px-2 " ++ backgroundColor} key={player.id}>
+  <li className={"py-3 px-2 " ++ backgroundColor} key={player.id}>
     <div className="flex">
       <div className="w-full">
         <p>

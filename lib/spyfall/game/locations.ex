@@ -1,4 +1,10 @@
 defmodule Spyfall.Game.Locations do
+  def all(number_of_locations) do
+    all()
+    |> Enum.shuffle()
+    |> Enum.take(number_of_locations)
+  end
+
   def all() do
     [
       %{id: "airplane", name: "Airplane"},

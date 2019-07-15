@@ -4,13 +4,16 @@ defmodule SpyfallWeb.GameController do
   alias Spyfall.Game.Player
 
   def new(conn, _params) do
-    render(conn, "new.html", changeset: Game.Form.create_changeset(%{minutes: 10}))
+    render(conn, "new.html",
+      changeset: Game.Form.create_changeset(%{minutes: 10, number_of_locations: 25})
+    )
   end
 
   def create(conn, %{"form" => params}) do
     with %{valid?: true} <- Game.Form.create_changeset(params),
          %Player{} = player <- Player.create(params["name"]),
-         {:ok, %Game{} = game} <- Game.create(player, params["minutes"]) do
+         {:ok, %Game{} = game} <-
+           Game.create(player, params["minutes"], params["number_of_locations"]) do
       conn
       |> put_session(:game, game)
       |> put_session(:player, player)
