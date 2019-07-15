@@ -1,14 +1,14 @@
 defmodule Spyfall.Game do
   alias Spyfall.Game
-  alias Spyfall.Game.{Player, Registry, Locations}
+  alias Spyfall.Game.{Player, Locations}
 
   # status = :waiting | :in_progress | :finished
   @enforce_keys [:id, :players, :status, :minutes, :locations]
-  @derive Jason.Encoder
-  defstruct [:id, players: [], status: :waiting, minutes: 10, locations: []]
+  @derive {Jason.Encoder, only: [:id, :players, :status, :minutes, :locations]}
+  defstruct [:pid, :id, players: [], status: :waiting, minutes: 10, locations: [], meta: %{}]
 
   def get(%Game{} = game), do: get(game.id)
-  def get(game_id), do: Registry.get_game(game_id)
+  def get(game_id), do: Game.Server.get_game(game_id)
 
   def create(player, minutes, number_of_locations) when is_binary(minutes) do
     create(player, String.to_integer(minutes), number_of_locations)
@@ -28,9 +28,8 @@ defmodule Spyfall.Game do
            players: [player],
            minutes: minutes,
            locations: Locations.all(number_of_locations)
-         },
-         :ok <- Registry.register_or_replace_game(game) do
-      {:ok, game}
+         } do
+      Game.Server.create_game(game)
     else
       _ ->
         create(player, minutes, number_of_locations)
@@ -38,9 +37,7 @@ defmodule Spyfall.Game do
   end
 
   def start(%Game{} = game) do
-    game = %{game | status: :in_progress, players: Enum.shuffle(game.players)}
-    Registry.register_or_replace_game(game)
-    {:ok, game}
+    Game.Server.start_game(game)
   end
 
   def start(game_id) when is_binary(game_id) do
@@ -52,8 +49,7 @@ defmodule Spyfall.Game do
 
   def finish(%Game{} = game) do
     game = %{game | status: :finished}
-    Registry.register_or_replace_game(game)
-    {:ok, game}
+    Game.Server.delete_game(game)
   end
 
   def finish(game_id) when is_binary(game_id) do
@@ -63,7 +59,7 @@ defmodule Spyfall.Game do
     end
   end
 
-  def delete(%Game{} = game), do: Registry.delete_game(game)
+  def delete(%Game{} = game), do: Game.Server.delete_game(game)
 
   def add_player(game_id, player_name) do
     with {:ok, game} <- get(game_id),
@@ -71,7 +67,7 @@ defmodule Spyfall.Game do
          %Player{} = player <- Player.create(player_name),
          false <- game_has_player?(game, player),
          game <- %{game | players: [player | game.players]},
-         :ok <- Registry.register_or_replace_game(game) do
+         {:ok, game} <- Game.Server.update_game(game) do
       {:ok, game, player}
     else
       :in_progress ->
@@ -92,9 +88,8 @@ defmodule Spyfall.Game do
     with {:ok, game} <- get(game_id),
          :waiting <- game.status,
          players <- Enum.reject(game.players, &(&1.id == player_id)),
-         game <- %{game | players: players},
-         :ok <- Registry.register_or_replace_game(game) do
-      {:ok, game}
+         game <- %{game | players: players} do
+      Game.Server.update_game(game)
     else
       _ ->
         {:error, "Unable to add player"}
