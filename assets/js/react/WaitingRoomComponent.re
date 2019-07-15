@@ -1,21 +1,23 @@
 let renderPlayer = (index: int, player: Player.t, channel) => {
   let indexString = string_of_int(index + 1);
-  <li className="mb-4">
+
+  let backgroundColor = index mod 2 == 0 ? "bg-gray-100" : "bg-white";
+
+  <li className={"py-4 px-2 " ++ backgroundColor}>
     <div className="flex">
-      <div className="w-3/4">
+      <div className="w-full">
         <p>
           <span> {React.string(indexString ++ ". ")} </span>
-          <span className="ml-1"> {React.string(player.name)} </span>
+          <span className="pl-2"> {React.string(player.name)} </span>
         </p>
       </div>
-      <div className="w-1/4 text-right">
+      <div className="text-right">
         <a
           href=""
           className="text-red-700 hover:text-red-900"
           onClick={e => {
             e->ReactEvent.Mouse.preventDefault;
-            let _ = Phoenix.removePlayer(player.id, channel);
-            ();
+            Phoenix.removePlayer(player.id, channel);
           }}>
           {React.string("X")}
         </a>
@@ -54,8 +56,17 @@ let make = (~game: Game.t, ~player: Player.t) => {
         {React.string("https://spyfall.avencera.com/" ++ game.id)}
       </p>
     </div>
-    <div className="mb-4 text-left">
+    <div className="mb-10 text-left">
       {renderPlayers(game.players, channel)}
+    </div>
+    <div className="buttons-row flex">
+      <div className="w-full">
+        <button
+          className="indigo-button-outline w-full"
+          onClick={_e => Phoenix.startGame(channel)}>
+          {React.string("Start Game")}
+        </button>
+      </div>
     </div>
   </div>;
 };

@@ -23,7 +23,8 @@ let joinChannel = (gameId: string, playerId: string, updateGame) => {
 };
 
 let pushMessage = (event: string, message: Js.t('a), channel: Phx_channel.t) => {
-  Phx.push(event, message, channel);
+  let _ = Phx.push(event, message, channel);
+  ();
 };
 
 let removePlayer = (player_id: string, channel: Phx_channel.t) => {
