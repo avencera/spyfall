@@ -8,6 +8,7 @@ type t = {
   minutes: int,
   players: array(Player.t),
   status,
+  locations: array(Location.t),
 };
 
 let stringToStatus =
@@ -24,6 +25,7 @@ module Decode = {
       minutes: field("minutes", int, json),
       status: field("status", string, json)->stringToStatus,
       players: field("players", Player.Decode.players, json),
+      locations: field("locations", Location.Decode.locations, json)
     };
 
   let game = gameDecoder;

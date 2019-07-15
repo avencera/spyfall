@@ -1,11 +1,11 @@
 defmodule Spyfall.Game do
   alias Spyfall.Game
-  alias Spyfall.Game.{Player, Registry}
+  alias Spyfall.Game.{Player, Registry, Locations}
 
   # status = :waiting | :in_progress | :finished
-  @enforce_keys [:id, :players, :status, :minutes]
+  @enforce_keys [:id, :players, :status, :minutes, :locations]
   @derive Jason.Encoder
-  defstruct [:id, players: [], status: :waiting, minutes: 10]
+  defstruct [:id, players: [], status: :waiting, minutes: 10, locations: []]
 
   def get(%Game{} = game), do: get(game.id)
   def get(game_id), do: Registry.get_game(game_id)
@@ -18,7 +18,13 @@ defmodule Spyfall.Game do
     game_id = generate_game_id()
 
     with :not_found <- get(game_id),
-         game <- %Game{id: game_id, status: :waiting, players: [player], minutes: minutes},
+         game <- %Game{
+           id: game_id,
+           status: :waiting,
+           players: [player],
+           minutes: minutes,
+           locations: Locations.all()
+         },
          :ok <- Registry.register_or_replace_game(game) do
       {:ok, game}
     else
