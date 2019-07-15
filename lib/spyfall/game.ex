@@ -59,6 +59,28 @@ defmodule Spyfall.Game do
     end
   end
 
+  def get_time_left(%Game{} = game) do
+    case game.meta.started_at do
+      nil ->
+        {:error, "Not yet started"}
+
+      started_at ->
+        secs_since_game_started = System.monotonic_time(:second) - started_at
+
+        IO.inspect(secs_since_game_started, label: "Elapsed")
+
+        time_left = game.minutes * 60 - secs_since_game_started
+        {:ok, time_left}
+    end
+  end
+
+  def get_time_left(game_id) when is_binary(game_id) do
+    case get(game_id) do
+      {:ok, game} -> get_time_left(game)
+      :not_found -> {:error, "Game not found"}
+    end
+  end
+
   def delete(%Game{} = game), do: Game.Server.delete_game(game)
 
   def add_player(game_id, player_name) do

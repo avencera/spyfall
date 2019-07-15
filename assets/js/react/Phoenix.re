@@ -38,3 +38,14 @@ let startGame = (channel: Phx_channel.t) => {
 let endGame = (channel: Phx_channel.t) => {
   pushMessage("end_game", Js.Obj.empty(), channel);
 };
+
+let getTimeLeft = (channel, updateTime) => {
+  let newChannel =
+    channel
+    |> Phx.putOn("received_time_left", responseJson => {
+         let timeLeft = Json.Decode.(field("time_left", int, responseJson));
+         updateTime(timeLeft);
+       });
+
+  pushMessage("get_time_left", Js.Obj.empty(), newChannel);
+};

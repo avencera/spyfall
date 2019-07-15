@@ -41,6 +41,15 @@ defmodule SpyfallWeb.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("get_time_left", _, socket) do
+    case Game.get_time_left(socket.assigns.game_id) do
+      {:ok, time_left} -> broadcast(socket, "received_time_left", %{time_left: time_left})
+      _ -> :nothing
+    end
+
+    {:noreply, socket}
+  end
+
   def handle_info({:send_game, game_id}, socket) do
     case Game.get(game_id) do
       {:ok, game} -> broadcast(socket, "new_game", game)

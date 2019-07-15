@@ -41,9 +41,9 @@ defmodule Spyfall.Game.Server do
   def start_game(game) do
     game_id = String.upcase(game.id)
 
-    meta = Map.put(meta, :started_at, System.monotonic_time(:second))
+    meta = Map.put(game.meta, :started_at, System.monotonic_time(:second))
 
-    game = %{game | status: :in_progress, players: Enum.shuffle(game.players)}
+    game = %{game | status: :in_progress, players: Enum.shuffle(game.players), meta: meta}
 
     GenServer.cast(@registry, {:insert, game_id, game})
     schedule_clean_up(game)
