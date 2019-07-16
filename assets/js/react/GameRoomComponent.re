@@ -4,14 +4,16 @@ type action =
   | UpdateSecret(Secret.t)
   | SelectLocation(Location.t)
   | SelectPlayer(Player.t)
+  | ToggleSecretDisplay
   | AddTimerId(Js.Global.intervalId);
 
 type state = {
   timerId: option(Js.Global.intervalId),
   timeLeft: option(int),
+  secret: option(Secret.t),
+  displaySecret: bool,
   playerSelections: list(Player.t),
   locationSelections: list(Location.t),
-  secret: option(Secret.t),
 };
 
 [@react.component]
@@ -51,11 +53,16 @@ let make = (~game: Game.t, ~player: Player.t) => {
             playerSelections:
               Util.List.toggle(state.playerSelections, player),
           }
+        | ToggleSecretDisplay => {
+            ...state,
+            displaySecret: !state.displaySecret,
+          }
         },
       {
         timerId: None,
         timeLeft: None,
         secret: None,
+        displaySecret: true,
         playerSelections: [],
         locationSelections: [],
       },
@@ -116,7 +123,16 @@ let make = (~game: Game.t, ~player: Player.t) => {
       )
       ->React.string;
 
-    <div> <p> text </p> </div>;
+    <div className="flex text-center items-center justify-center text-center">
+      <p className={"ml-4 " ++ (state.displaySecret ? "" : "hidden")}>
+        text
+      </p>
+      <span
+        onClick={_e => dispatch(ToggleSecretDisplay)}
+        className="ml-4 underline text-xs cursor-pointer uppercase font-black flex mt-1 text-gray-800">
+        {React.string(state.displaySecret ? "hide" : "show")}
+      </span>
+    </div>;
   };
 
   let displayPlayers = (game: Game.t) => {
