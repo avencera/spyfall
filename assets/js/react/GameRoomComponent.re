@@ -137,7 +137,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
 
   let displayPlayers = (game: Game.t) => {
     <div className="flex flex-wrap">
-      {{Belt.Array.map(game.players, player =>
+      {{Belt.Array.mapWithIndex(game.players, (index, player) =>
           <div
             key={player.id}
             className={
@@ -148,7 +148,16 @@ let make = (~game: Game.t, ~player: Player.t) => {
               )
             }
             onClick={_e => dispatch(SelectPlayer(player))}>
-            <p className="text-center"> {React.string(player.name)} </p>
+            <p className="text-center">
+              {if (index == 0) {
+                 <sup className="pr-1 text-indigo-600">
+                   {React.string("1st")}
+                 </sup>;
+               } else {
+                 React.null;
+               }}
+              {React.string(player.name)}
+            </p>
           </div>
         )}
        ->React.array}
