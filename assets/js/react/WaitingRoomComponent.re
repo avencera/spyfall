@@ -1,9 +1,14 @@
 let renderPlayer = (index: int, player: Player.t, channel) => {
   let indexString = string_of_int(index + 1);
 
-  let backgroundColor = index mod 2 == 0 ? "bg-gray-100" : "bg-white";
+  let backgroundColor =
+    index mod 2 == 0
+      ? "bg-gray-100 md:border-2 md:border-white"
+      : "bg-white md:bg-gray-100 md:border-2 md:border-white";
 
-  <li className={"py-3 px-2 " ++ backgroundColor} key={player.id}>
+  <li
+    className={"md:w-1/2 w-full py-3 px-2 " ++ backgroundColor}
+    key={player.id}>
     <div className="flex">
       <div className="w-full">
         <p>
@@ -26,7 +31,7 @@ let renderPlayer = (index: int, player: Player.t, channel) => {
   </li>;
 };
 let renderPlayers = (players: array(Player.t), channel) => {
-  <ul>
+  <ul className="flex flex-wrap">
     {players
      ->Belt.Array.mapWithIndex((index, player) =>
          renderPlayer(index, player, channel)
@@ -59,10 +64,10 @@ let make = (~game: Game.t, ~player: Player.t) => {
     <div className="mb-10 text-left">
       {renderPlayers(game.players, channel)}
     </div>
-    <div className="buttons-row flex">
-      <div className="w-full">
+    <div className="buttons-row md:flex">
+      <div className="md:flex md:justify-center w-full">
         <button
-          className="indigo-button-outline w-full"
+          className="indigo-button-outline md:w-1/2 w-full"
           onClick={_e => Phoenix.startGame(channel)}>
           {React.string("Start Game")}
         </button>

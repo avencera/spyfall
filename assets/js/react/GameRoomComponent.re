@@ -124,7 +124,11 @@ let make = (~game: Game.t, ~player: Player.t) => {
       ->React.string;
 
     <div className="flex text-center items-center justify-center text-center">
-      <p className={"ml-4 " ++ (state.displaySecret ? "" : "hidden")}>
+      <p
+        className={
+          "ml-4 "
+          ++ (state.displaySecret ? "show-hide shown" : "show-hide hiddden")
+        }>
         text
       </p>
       <span
@@ -150,7 +154,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
             onClick={_e => dispatch(SelectPlayer(player))}>
             <p className="text-center">
               {if (index == 0) {
-                 <sup className="pr-1 text-indigo-600">
+                 <sup className="pr-1 text-indigo-600 font-semibold">
                    {React.string("1st")}
                  </sup>;
                } else {
