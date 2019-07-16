@@ -28,6 +28,7 @@ defmodule Spyfall.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:base58, "~> 0.1.0"},
       {:phoenix, "~> 1.4.9"},
+      {:libcluster, "~> 3.1"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:phoenix_pubsub, "~> 1.1"},
       {:distributed_kv, github: "avencera/distributed_kv"},
