@@ -38,12 +38,24 @@ defmodule Spyfall.Game.Server do
     end
   end
 
+  def start_game(%Game{status: :in_progress} = game), do: {:ok, game}
+  def start_game(%Game{status: :finished} = game), do: {:ok, game}
+
   def start_game(game) do
     game_id = String.upcase(game.id)
 
     meta = Map.put(game.meta, :started_at, System.monotonic_time(:second))
 
-    game = %{game | status: :in_progress, players: Enum.shuffle(game.players), meta: meta}
+    spy = Enum.random(game.players)
+    secret = %{spy: spy, location: Enum.random(game.locations)}
+
+    game = %{
+      game
+      | status: :in_progress,
+        players: Enum.shuffle(game.players),
+        meta: meta,
+        secret: secret
+    }
 
     GenServer.cast(@registry, {:insert, game_id, game})
     schedule_clean_up(game)
@@ -79,14 +91,13 @@ defmodule Spyfall.Game.Server do
 
   @impl true
   def handle_info(:clean_up, game) do
+    IO.inspect(game, label: "RUNNING CLEAN UP FOR GAME")
+
     # delete game from registry
     game_id = String.upcase(game.id)
     GenServer.cast(@registry, {:delete, game_id})
 
-    # shutdown genserver
-    GenServer.stop(self(), :normal)
-
-    {:noreply, game}
+    {:stop, :normal, game}
   end
 
   @impl true

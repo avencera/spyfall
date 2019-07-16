@@ -7,10 +7,7 @@ type state = {
 
 let initialState = (flags: Flags.t): state => {
   gameId: flags.gameId,
-  player: {
-    ...flags.player,
-    role: flags.role,
-  },
+  player: flags.player,
   game: None,
   channel: None,
 };

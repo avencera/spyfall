@@ -23,6 +23,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
         switch (action) {
         | UpdateTime(time) => {...state, timeLeft: Some(time)}
         | AddTimerId(timerId) => {...state, timerId: Some(timerId)}
+        | UpdateSecret(secret) => {...state, secret: Some(secret)}
         | Tick =>
           // clear timer when it reaches 0
           switch (state.timeLeft, state.timerId) {
@@ -45,6 +46,8 @@ let make = (~game: Game.t, ~player: Player.t) => {
       Phoenix.getTimeLeft(channel, timeLeft =>
         dispatch(UpdateTime(timeLeft))
       );
+
+      Phoenix.getSecret(channel, secret => dispatch(UpdateSecret(secret)));
       None;
     },
     [||],
@@ -82,8 +85,19 @@ let make = (~game: Game.t, ~player: Player.t) => {
     | None => <div> {React.string("Loading .... ")} </div>
     };
 
+  let displaySecret = secret => {
+    (
+      switch (secret) {
+      | Some(Secret.Spy) => "You are the spy"
+      | Some(Secret.Location(location_name)) => "Location: " ++ location_name
+      | None => "Loading..."
+      }
+    )
+    ->React.string;
+  };
 
   <div>
     <div> {timeLeftComponent(state)} </div>
+    <div> {displaySecret(state.secret)} </div>
   </div>;
 };

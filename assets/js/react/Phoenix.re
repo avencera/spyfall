@@ -35,8 +35,8 @@ let startGame = (channel: Phx_channel.t) => {
   pushMessage("start_game", Js.Obj.empty(), channel);
 };
 
-let endGame = (channel: Phx_channel.t) => {
-  pushMessage("end_game", Js.Obj.empty(), channel);
+let endTimer = (channel: Phx_channel.t) => {
+  pushMessage("timer_ended", Js.Obj.empty(), channel);
 };
 
 let getTimeLeft = (channel, updateTime) => {
@@ -48,4 +48,16 @@ let getTimeLeft = (channel, updateTime) => {
        });
 
   pushMessage("get_time_left", Js.Obj.empty(), newChannel);
+};
+
+let getSecret = (channel, updateSecret) => {
+  let newChannel =
+    channel
+    |> Phx.putOn("received_secret:spy", _resp => updateSecret(Secret.Spy))
+    |> Phx.putOn("received_secret:location", responseJson => {
+         let location = Json.Decode.(field("location", string, responseJson));
+         updateSecret(Secret.Location(location));
+       });
+
+  pushMessage("get_secret", Js.Obj.empty(), newChannel);
 };

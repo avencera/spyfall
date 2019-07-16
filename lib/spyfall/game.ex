@@ -3,11 +3,12 @@ defmodule Spyfall.Game do
   alias Spyfall.Game.{Player, Locations}
 
   # status = :waiting | :in_progress | :finished
-  @enforce_keys [:id, :players, :status, :minutes, :locations]
+  @enforce_keys [:id, :players, :status, :minutes, :locations, :secret]
   @derive {Jason.Encoder, only: [:id, :players, :status, :minutes, :locations]}
   defstruct [
     :pid,
     :id,
+    :secret,
     players: [],
     status: :waiting,
     minutes: 10,
@@ -28,6 +29,7 @@ defmodule Spyfall.Game do
 
   def create(%Player{} = player, minutes, number_of_locations) do
     game_id = generate_game_id()
+    locations = Locations.all(number_of_locations)
 
     with :not_found <- get(game_id),
          game <- %Game{
@@ -35,7 +37,8 @@ defmodule Spyfall.Game do
            status: :waiting,
            players: [player],
            minutes: minutes,
-           locations: Locations.all(number_of_locations)
+           locations: locations,
+           secret: nil
          } do
       Game.Server.create_game(game)
     else

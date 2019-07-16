@@ -40,6 +40,21 @@ defmodule SpyfallWeb.GameChannel do
 
     {:noreply, socket}
   end
+
+  def handle_in("get_secret", _, socket) do
+    player_id = socket.assigns.player_id
+    game_id = socket.assigns.game_id
+
+    case Game.get(game_id) do
+      {:ok, game} ->
+        if game.secret.spy.id == player_id do
+          push(socket, "received_secret:spy", %{})
+        else
+          push(socket, "received_secret:location", %{location: game.secret.location.id})
+        end
+
+      _ ->
+        :nothing
     end
 
     {:noreply, socket}
