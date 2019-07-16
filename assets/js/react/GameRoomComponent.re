@@ -106,14 +106,17 @@ let make = (~game: Game.t, ~player: Player.t) => {
     };
 
   let displaySecret = secret => {
-    (
-      switch (secret) {
-      | Some(Secret.Spy) => "You are the spy"
-      | Some(Secret.Location(location_name)) => location_name
-      | None => "Loading..."
-      }
-    )
-    ->React.string;
+    let text =
+      (
+        switch (secret) {
+        | Some(Secret.Spy) => "You are the spy"
+        | Some(Secret.Location(location_name)) => location_name
+        | None => "Loading..."
+        }
+      )
+      ->React.string;
+
+    <div> <p> text </p> </div>;
   };
 
   let displayPlayers = (game: Game.t) => {
