@@ -2,11 +2,15 @@ type action =
   | Tick
   | UpdateTime(int)
   | UpdateSecret(Secret.t)
+  | SelectLocation(Location.t)
+  | SelectPlayer(Player.t)
   | AddTimerId(Js.Global.intervalId);
 
 type state = {
   timerId: option(Js.Global.intervalId),
   timeLeft: option(int),
+  playerSelections: list(Player.t),
+  locationSelections: list(Location.t),
   secret: option(Secret.t),
 };
 
@@ -37,8 +41,24 @@ let make = (~game: Game.t, ~player: Player.t) => {
                 Belt.Option.map(state.timeLeft, timeLeft => timeLeft - 1),
             }
           }
+        | SelectLocation(location) => {
+            ...state,
+            locationSelections:
+              Util.List.toggle(state.locationSelections, location),
+          }
+        | SelectPlayer(player) => {
+            ...state,
+            playerSelections:
+              Util.List.toggle(state.playerSelections, player),
+          }
         },
-      {timerId: None, timeLeft: None, secret: None},
+      {
+        timerId: None,
+        timeLeft: None,
+        secret: None,
+        playerSelections: [],
+        locationSelections: [],
+      },
     );
 
   React.useEffect1(
@@ -99,7 +119,16 @@ let make = (~game: Game.t, ~player: Player.t) => {
   let displayPlayers = (game: Game.t) => {
     <div className="flex flex-wrap">
       {{Belt.Array.map(game.players, player =>
-          <div className="content-clickable">
+          <div
+            key={player.id}
+            className={
+              "content-clickable"
+              ++ (
+                List.mem(player, state.playerSelections)
+                  ? " line-through" : ""
+              )
+            }
+            onClick={_e => dispatch(SelectPlayer(player))}>
             <p className="text-center"> {React.string(player.name)} </p>
           </div>
         )}
@@ -110,7 +139,16 @@ let make = (~game: Game.t, ~player: Player.t) => {
   let displayLocations = (game: Game.t) => {
     <div className="flex flex-wrap">
       {{Belt.Array.map(game.locations, location =>
-          <div className="content-clickable">
+          <div
+            className={
+              "content-clickable"
+              ++ (
+                List.mem(location, state.locationSelections)
+                  ? " line-through" : ""
+              )
+            }
+            onClick={_e => dispatch(SelectLocation(location))}
+            key={location.id}>
             <p className="text-center"> {React.string(location.name)} </p>
           </div>
         )}
