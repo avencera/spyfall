@@ -58,9 +58,14 @@ defmodule SpyfallWeb.GameController do
         |> render("join.html", changeset: changeset)
 
       {:error, msg} ->
+        changeset =
+          %{name: params["name"]}
+          |> Game.Form.join_changeset()
+          |> Map.put(:action, :insert)
+
         conn
         |> put_flash(:error, msg)
-        |> render("join.html", changeset: %{changeset | action: :insert})
+        |> render("join.html", changeset: changeset)
 
       _ ->
         conn

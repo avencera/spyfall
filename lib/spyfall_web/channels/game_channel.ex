@@ -50,7 +50,7 @@ defmodule SpyfallWeb.GameChannel do
         if game.secret.spy.id == player_id do
           push(socket, "received_secret:spy", %{})
         else
-          push(socket, "received_secret:location", %{location: game.secret.location.id})
+          push(socket, "received_secret:location", %{location: game.secret.location.name})
         end
 
       _ ->

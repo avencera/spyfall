@@ -89,7 +89,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
     (
       switch (secret) {
       | Some(Secret.Spy) => "You are the spy"
-      | Some(Secret.Location(location_name)) => "Location: " ++ location_name
+      | Some(Secret.Location(location_name)) => "location_name"
       | None => "Loading..."
       }
     )
@@ -97,7 +97,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
   };
 
   <div>
-    <div> {timeLeftComponent(state)} </div>
-    <div> {displaySecret(state.secret)} </div>
+    <div className="mb-4"> {timeLeftComponent(state)} </div>
+    <div className="mb-4"> {displaySecret(state.secret)} </div>
   </div>;
 };
