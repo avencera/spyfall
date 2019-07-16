@@ -1,12 +1,14 @@
 defmodule Spyfall.Game.Location do
   @type t :: %{id: String.t(), name: String.t()}
 
+  @spec all(integer) :: list(Location.t())
   def all(number_of_locations) do
     all()
     |> Enum.shuffle()
     |> Enum.take(number_of_locations)
   end
 
+  @spec all() :: list(Location.t())
   def all() do
     [
       %{id: "airplane", name: "Airplane"},

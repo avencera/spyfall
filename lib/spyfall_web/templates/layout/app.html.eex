@@ -15,7 +15,7 @@
       </section>
     </header>
     <div
-         class="container mx-auto flex items-center h-screen align-center justify-center -mt-6 flex-wrap">
+         class="container mx-auto flex items-center h-screen align-center justify-center flex-wrap pt-4">
       <div class="w-full mx-auto text-center">
         <main role="main">
           <%= render(@view_module, @view_template, assigns) %>

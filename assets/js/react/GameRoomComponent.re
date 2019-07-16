@@ -89,15 +89,53 @@ let make = (~game: Game.t, ~player: Player.t) => {
     (
       switch (secret) {
       | Some(Secret.Spy) => "You are the spy"
-      | Some(Secret.Location(location_name)) => "location_name"
+      | Some(Secret.Location(location_name)) => location_name
       | None => "Loading..."
       }
     )
     ->React.string;
   };
 
+  let displayPlayers = (game: Game.t) => {
+    <div className="flex flex-wrap">
+      {{Belt.Array.map(game.players, player =>
+          <div className="content-clickable">
+            <p className="text-center"> {React.string(player.name)} </p>
+          </div>
+        )}
+       ->React.array}
+    </div>;
+  };
+
+  let displayLocations = (game: Game.t) => {
+    <div className="flex flex-wrap">
+      {{Belt.Array.map(game.locations, location =>
+          <div className="content-clickable">
+            <p className="text-center"> {React.string(location.name)} </p>
+          </div>
+        )}
+       ->React.array}
+    </div>;
+  };
+
   <div>
-    <div className="mb-4"> {timeLeftComponent(state)} </div>
-    <div className="mb-4"> {displaySecret(state.secret)} </div>
+    <div className="mb-1 text-gray-900 font-bold text-3xl">
+      {timeLeftComponent(state)}
+    </div>
+    <div className="font-semibold text-gray-800 mb-12 text-md">
+      {displaySecret(state.secret)}
+    </div>
+    <div className="text-left">
+      <h1 className="mb-3 text-gray-700 font-bold uppercase">
+        {React.string("Players")}
+      </h1>
+      <div className="mb-10"> {displayPlayers(game)} </div>
+    </div>
+    <div className="text-left">
+      <h1 className="mb-3 text-gray-700 font-bold uppercase ">
+        {React.string("Locations")}
+      </h1>
+      <div className="mb-4"> {displayLocations(game)} </div>
+    </div>
   </div>;
 };
