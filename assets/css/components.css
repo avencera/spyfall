@@ -34,3 +34,11 @@ a {
 .gray-button-outline:hover {
   @apply bg-gray-500 text-white border-transparent;
 }
+
+.content-clickable {
+  @apply w-1/2 py-2 bg-gray-100 text-sm font-medium text-gray-700 border-white border-2 cursor-pointer;
+}
+
+.content-clickable:hover {
+  @apply bg-gray-300;
+}

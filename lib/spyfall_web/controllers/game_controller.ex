@@ -41,8 +41,7 @@ defmodule SpyfallWeb.GameController do
     changeset = Game.Form.join_changeset(params)
 
     with %{valid?: true} <- changeset,
-         {:ok, game} <- Game.get(params["game_id"]),
-         {:ok, game, player} <- Game.add_player(game, params["name"]) do
+         {:ok, game, player} <- Game.add_player(params["game_id"], params["name"]) do
       conn
       |> put_session(:game, game)
       |> put_session(:player, player)
@@ -59,9 +58,14 @@ defmodule SpyfallWeb.GameController do
         |> render("join.html", changeset: changeset)
 
       {:error, msg} ->
+        changeset =
+          %{name: params["name"]}
+          |> Game.Form.join_changeset()
+          |> Map.put(:action, :insert)
+
         conn
         |> put_flash(:error, msg)
-        |> render("join.html", changeset: %{changeset | action: :insert})
+        |> render("join.html", changeset: changeset)
 
       _ ->
         conn
@@ -74,7 +78,7 @@ defmodule SpyfallWeb.GameController do
          {:ok, game} <- Game.get(game.id),
          {%Player{} = player, _} <- {get_session(conn, :player), :player},
          true <- Game.game_has_player?(game, player) do
-      data_json = Jason.encode!(%{player: player, game_id: game.id, role: player.role})
+      data_json = Jason.encode!(%{player: player, game_id: game.id})
 
       render(conn, "room.html", data: data_json)
     else
