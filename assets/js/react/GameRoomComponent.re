@@ -127,14 +127,14 @@ let make = (~game: Game.t, ~player: Player.t) => {
       <p
         className={
           "ml-4 "
-          ++ (state.displaySecret ? "show-hide shown" : "show-hide hiddden")
+          ++ (state.displaySecret ? "show-hide visible" : "show-hide invisble")
         }>
         text
       </p>
       <span
         onClick={_e => dispatch(ToggleSecretDisplay)}
         className="ml-4 underline text-xs cursor-pointer uppercase font-black flex mt-1 text-gray-800">
-        {React.string(state.displaySecret ? "hide" : "show")}
+        {React.string(state.displaySecret ? "show" : "hide")}
       </span>
     </div>;
   };
