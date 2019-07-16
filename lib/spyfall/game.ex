@@ -5,7 +5,15 @@ defmodule Spyfall.Game do
   # status = :waiting | :in_progress | :finished
   @enforce_keys [:id, :players, :status, :minutes, :locations]
   @derive {Jason.Encoder, only: [:id, :players, :status, :minutes, :locations]}
-  defstruct [:pid, :id, players: [], status: :waiting, minutes: 10, locations: [], meta: %{}]
+  defstruct [
+    :pid,
+    :id,
+    players: [],
+    status: :waiting,
+    minutes: 10,
+    locations: [],
+    meta: %{}
+  ]
 
   def get(%Game{} = game), do: get(game.id)
   def get(game_id), do: Game.Server.get_game(game_id)
@@ -49,7 +57,7 @@ defmodule Spyfall.Game do
 
   def finish(%Game{} = game) do
     game = %{game | status: :finished}
-    Game.Server.delete_game(game)
+    Game.Server.update_game(game)
   end
 
   def finish(game_id) when is_binary(game_id) do
@@ -66,9 +74,6 @@ defmodule Spyfall.Game do
 
       started_at ->
         secs_since_game_started = System.monotonic_time(:second) - started_at
-
-        IO.inspect(secs_since_game_started, label: "Elapsed")
-
         time_left = game.minutes * 60 - secs_since_game_started
         {:ok, time_left}
     end

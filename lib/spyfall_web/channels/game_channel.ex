@@ -32,10 +32,14 @@ defmodule SpyfallWeb.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_in("finished_game", _, socket) do
-    case Game.finish(socket.assigns.game_id) do
-      {:ok, new_game} -> broadcast(socket, "new_game", new_game)
-      _ -> :nothing
+  def handle_in("timer_ended", _, socket) do
+    with {:ok, time_left} when time_left <= 0 <- Game.get_time_left(socket.assigns.game_id),
+         {:ok, new_game} <- Game.finish(socket.assigns.game_id) do
+      broadcast(socket, "new_game", new_game)
+    end
+
+    {:noreply, socket}
+  end
     end
 
     {:noreply, socket}
@@ -43,8 +47,15 @@ defmodule SpyfallWeb.GameChannel do
 
   def handle_in("get_time_left", _, socket) do
     case Game.get_time_left(socket.assigns.game_id) do
-      {:ok, time_left} -> broadcast(socket, "received_time_left", %{time_left: time_left})
-      _ -> :nothing
+      {:ok, time_left} when time_left <= 0 ->
+        broadcast(socket, "received_time_left", %{time_left: 0})
+        handle_in("timer_ended", :nothing, socket)
+
+      {:ok, time_left} ->
+        broadcast(socket, "received_time_left", %{time_left: time_left})
+
+      _ ->
+        :nothing
     end
 
     {:noreply, socket}
