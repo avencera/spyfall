@@ -1,4 +1,6 @@
-defmodule Spyfall.Game.Locations do
+defmodule Spyfall.Game.Location do
+  @type t :: %{id: String.t(), name: String.t()}
+
   def all(number_of_locations) do
     all()
     |> Enum.shuffle()

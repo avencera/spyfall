@@ -38,6 +38,7 @@ defmodule Spyfall.Game.Server do
     end
   end
 
+  @spec start_game(Game.t()) :: {:ok, Game.t()} | {:error, String.t()}
   def start_game(%Game{status: :in_progress} = game), do: {:ok, game}
   def start_game(%Game{status: :finished} = game), do: {:ok, game}
 
@@ -63,12 +64,14 @@ defmodule Spyfall.Game.Server do
     {:ok, game}
   end
 
+  @spec update_game(Game.t()) :: {:ok, Game.t()}
   def update_game(%Game{} = game) do
     game_id = String.upcase(game.id)
     GenServer.cast(@registry, {:insert, game_id, game})
     {:ok, game}
   end
 
+  @spec delete_game(Game.t()) :: {:ok, Game.t()}
   def delete_game(game) do
     game_id = String.upcase(game.id)
 

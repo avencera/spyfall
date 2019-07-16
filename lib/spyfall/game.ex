@@ -1,8 +1,21 @@
 defmodule Spyfall.Game do
   alias Spyfall.Game
-  alias Spyfall.Game.{Player, Locations}
+  alias Spyfall.Game.{Player, Location}
 
-  # status = :waiting | :in_progress | :finished
+  @type t :: %Game{
+          pid: pid,
+          id: id,
+          secret: secret,
+          players: list(Player.t()),
+          status: status,
+          minutes: integer,
+          locations: list(Location.t())
+        }
+
+  @type id :: String.t()
+  @type status :: :waiting | :in_progress | :finished
+  @type secret :: %{spy: Player.t(), location: Location.t()}
+
   @enforce_keys [:id, :players, :status, :minutes, :locations, :secret]
   @derive {Jason.Encoder, only: [:id, :players, :status, :minutes, :locations]}
   defstruct [
@@ -16,20 +29,27 @@ defmodule Spyfall.Game do
     meta: %{}
   ]
 
+  @spec get(Game.t()) :: {:ok, Game.t()} | :not_found
   def get(%Game{} = game), do: get(game.id)
+
+  @spec get(id) :: {:ok, Game.t()} | :not_found
   def get(game_id), do: Game.Server.get_game(game_id)
 
-  def create(player, minutes, number_of_locations) when is_binary(minutes) do
+  @spec create(Player.t(), String.t(), integer) :: {:ok, Game.t()}
+  def create(%Player{} = player, minutes, number_of_locations) when is_binary(minutes) do
     create(player, String.to_integer(minutes), number_of_locations)
   end
 
-  def create(player, minutes, number_of_locations) when is_binary(number_of_locations) do
+  @spec create(Player.t(), integer, String.t()) :: {:ok, Game.t()}
+  def create(%Player{} = player, minutes, number_of_locations)
+      when is_binary(number_of_locations) do
     create(player, minutes, String.to_integer(number_of_locations))
   end
 
+  @spec create(Player.t(), integer, integer) :: {:ok, Game.t()}
   def create(%Player{} = player, minutes, number_of_locations) do
     game_id = generate_game_id()
-    locations = Locations.all(number_of_locations)
+    locations = Location.all(number_of_locations)
 
     with :not_found <- get(game_id),
          game <- %Game{
@@ -47,10 +67,7 @@ defmodule Spyfall.Game do
     end
   end
 
-  def start(%Game{} = game) do
-    Game.Server.start_game(game)
-  end
-
+  @spec start(id) :: {:ok, Game.t()} | {:error, String.t()}
   def start(game_id) when is_binary(game_id) do
     case get(game_id) do
       {:ok, game} -> start(game)
@@ -58,11 +75,18 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec start(Game.t()) :: {:ok, Game.t()} | {:error, String.t()}
+  def start(%Game{} = game) do
+    Game.Server.start_game(game)
+  end
+
+  @spec finish(Game.t()) :: {:ok, Game.t()} | {:error, String.t()}
   def finish(%Game{} = game) do
     game = %{game | status: :finished}
     Game.Server.update_game(game)
   end
 
+  @spec finish(id) :: {:ok, Game.t()} | {:error, String.t()}
   def finish(game_id) when is_binary(game_id) do
     case get(game_id) do
       {:ok, game} -> finish(game)
@@ -70,6 +94,7 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec get_time_left(Game.t()) :: {:ok, integer} | {:error, String.t()}
   def get_time_left(%Game{} = game) do
     case game.meta.started_at do
       nil ->
@@ -82,6 +107,7 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec get_time_left(id) :: {:ok, integer} | {:error, String.t()}
   def get_time_left(game_id) when is_binary(game_id) do
     case get(game_id) do
       {:ok, game} -> get_time_left(game)
@@ -89,8 +115,10 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec delete(Game.t()) :: {:ok, Game.t()}
   def delete(%Game{} = game), do: Game.Server.delete_game(game)
 
+  @spec add_player(id, String.t()) :: {:ok, Game.t(), Player.t()} | {:error, String.t()}
   def add_player(game_id, player_name) do
     with {:ok, game} <- get(game_id),
          :waiting <- game.status,
@@ -114,6 +142,7 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec remove_player(id, String.t()) :: {:ok, Game.t()} | {:error, String.t()}
   def remove_player(game_id, player_id) do
     with {:ok, game} <- get(game_id),
          :waiting <- game.status,
@@ -126,6 +155,7 @@ defmodule Spyfall.Game do
     end
   end
 
+  @spec game_has_player?(Game.t(), Player.t()) :: true | false
   def game_has_player?(game, player) do
     player_ids =
       game
@@ -135,6 +165,7 @@ defmodule Spyfall.Game do
     player.id in player_ids
   end
 
+  @spec generate_game_id() :: id
   defp generate_game_id() do
     1..4
     |> Enum.map(fn _x -> :rand.uniform(58) end)

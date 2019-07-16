@@ -41,8 +41,7 @@ defmodule SpyfallWeb.GameController do
     changeset = Game.Form.join_changeset(params)
 
     with %{valid?: true} <- changeset,
-         {:ok, game} <- Game.get(params["game_id"]),
-         {:ok, game, player} <- Game.add_player(game, params["name"]) do
+         {:ok, game, player} <- Game.add_player(params["game_id"], params["name"]) do
       conn
       |> put_session(:game, game)
       |> put_session(:player, player)
