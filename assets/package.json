@@ -2,7 +2,7 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "deploy": "yarn run re:build; webpack --mode production",
+    "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "re:build": "bsb -make-world -clean-world",
     "re:watch": "bsb -make-world -clean-world -w"

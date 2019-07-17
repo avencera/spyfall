@@ -1,5 +1,5 @@
-# STEP 1 - RELEASE BUILDER
-FROM elixir:1.9-alpine AS builder
+# STEP 1 - DEPS GETTER
+FROM elixir:1.9-alpine AS deps-getter
 
 # setup up variables
 ARG APP_NAME
@@ -18,16 +18,9 @@ RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
     git \
-    nodejs \
-    npm \
     build-base && \
-    npm i -g yarn && \
     mix local.rebar --force && \
     mix local.hex --force
-
-# install rebar and hex
-RUN mix local.rebar --force
-RUN mix local.hex --force
 
 # elixir create diretories
 ENV MIX_ENV=prod
@@ -46,18 +39,62 @@ COPY mix.lock /app/mix.lock
 RUN mix do deps.get --only $MIX_ENV, deps.compile
 RUN mix compile
 
+################################################################################
+# STEP 2 - ASSET BUILDER
+FROM node:10 AS asset-builder
+
+RUN mkdir /app
+WORKDIR /app
+
+# install latest version of yarn and bs-platform
+RUN npm i -g yarn
+RUN npm install -g bs-platform --unsafe-perm
+
+COPY --from=deps-getter /app/assets /app/assets
+COPY --from=deps-getter /app/priv /app/priv
+COPY --from=deps-getter /app/deps /app/deps
+
 # assets -- install javascript deps
 COPY assets/package.json /app/assets/package.json
 COPY assets/yarn.lock /app/assets/yarn.lock
-RUN cd ${PHOENIX_SUBDIR}/assets && \
+RUN cd /app/assets && \
     yarn install && \
-    cd -
+    npm link bs-platform
 
 # assets -- build assets
 COPY assets /app/assets
-RUN cd ${PHOENIX_SUBDIR}/assets && \
-    yarn deploy && \
-    cd -
+RUN cd /app/assets && bsb -make-world -clean-world
+RUN cd /app/assets && yarn deploy  
+
+
+################################################################################
+# STEP 3 - RELEASE BUILDER
+FROM elixir:1.9-alpine AS release-builder
+
+ENV MIX_ENV=prod
+
+RUN mkdir /app
+WORKDIR /app
+
+# setup up variables
+ARG APP_NAME
+ARG APP_VSN
+
+ENV APP_NAME=${APP_NAME} \
+    APP_VSN=${APP_VSN} 
+
+
+# need to install deps again to run mix phx.digest
+RUN apk update && \
+    apk upgrade --no-cache && \
+    apk add --no-cache \
+    git \
+    build-base && \
+    mix local.rebar --force && \
+    mix local.hex --force
+
+COPY --from=deps-getter /app /app
+COPY --from=asset-builder /app/priv/static /app/priv/static
 
 # copy config, priv and release directories
 COPY config /app/config
@@ -70,14 +107,11 @@ COPY lib /app/lib
 
 # create release
 RUN mkdir -p /opt/built &&\
-    mix release --verbose &&\
-    cp _build/prod/rel/${APP_NAME}/releases/${APP_VSN}/${APP_NAME}.tar.gz /opt/built &&\
-    cd /opt/built &&\ 
-    tar -xzf ${APP_NAME}.tar.gz &&\
-    rm ${APP_NAME}.tar.gz
+    mix release &&\
+    cp -r _build/prod/rel/${APP_NAME} /opt/built
 
 ################################################################################
-## STEP 2 - FINAL
+## STEP 4 - FINAL
 FROM alpine:3.9
 
 ENV MIX_ENV=prod
@@ -87,5 +121,6 @@ RUN apk update && \
     bash \
     openssl-dev
 
-COPY --from=builder /opt/built /app
+COPY --from=release-builder /opt/built /app
 WORKDIR /app
+CMD ["/app/spyfall/bin/spyfall", "start"]

@@ -2,10 +2,6 @@ import Config
 
 config :logger, level: String.to_atom(System.get_env("LOGGER_LEVER", "info"))
 
-config :spyfall, Spyfall.Repo,
-  url: System.fetch_env!("DATABASE_URL"),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE", "10"))
-
 config :spyfall, SpyfallWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT", "4000"))],
   secret_key_base: System.fetch_env!("SECRET_KEY_BASE")

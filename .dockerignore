@@ -1,0 +1,15 @@
+node_modules
+_build
+deps
+/_build
+/db
+/deps
+/*.ez
+.git
+.git/
+.gitignore
+Dockerfile
+Makefile
+README*
+test/
+priv/static/
