@@ -9,6 +9,7 @@ type action =
 
 type state = {
   timerId: option(Js.Global.intervalId),
+  lastUpdatedAt: int,
   timeLeft: option(int),
   secret: option(Secret.t),
   displaySecret: bool,
@@ -27,7 +28,11 @@ let make = (~game: Game.t, ~player: Player.t) => {
     React.useReducer(
       (state: state, action: action) =>
         switch (action) {
-        | UpdateTime(time) => {...state, timeLeft: Some(time)}
+        | UpdateTime(time) => {
+            ...state,
+            timeLeft: Some(time),
+            lastUpdatedAt: Js.Date.make()->Js.Date.getTime->int_of_float,
+          }
         | AddTimerId(timerId) => {...state, timerId: Some(timerId)}
         | UpdateSecret(secret) => {...state, secret: Some(secret)}
         | Tick =>
@@ -37,11 +42,24 @@ let make = (~game: Game.t, ~player: Player.t) => {
             Phoenix.endTimer(channel);
             Js.Global.clearInterval(timerId);
             {...state, timeLeft: Some(0)};
-          | _ => {
+          | _ =>
+            // hack to force re-sync timer if it gets out of sync
+            // if it wasn't updated in more than 2 seconds don't update
+            // this will trigger the effect which will get the new time and
+            // set the lastUpdatedAt
+            let currentTime = Js.Date.make()->Js.Date.getTime->int_of_float;
+            let lastUpdatedAt =
+              if (abs(currentTime - state.lastUpdatedAt) > 2000) {
+                state.lastUpdatedAt;
+              } else {
+                Js.Date.make()->Js.Date.getTime->int_of_float;
+              };
+            {
               ...state,
+              lastUpdatedAt,
               timeLeft:
                 Belt.Option.map(state.timeLeft, timeLeft => timeLeft - 1),
-            }
+            };
           }
         | SelectLocation(location) => {
             ...state,
@@ -60,6 +78,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
         },
       {
         timerId: None,
+        lastUpdatedAt: Js.Date.make()->Js.Date.getTime->int_of_float,
         timeLeft: None,
         secret: None,
         displaySecret: true,
@@ -68,23 +87,32 @@ let make = (~game: Game.t, ~player: Player.t) => {
       },
     );
 
-  React.useEffect1(
-    () => {
-      Phoenix.getTimeLeft(channel, timeLeft =>
-        dispatch(UpdateTime(timeLeft))
-      );
+  React.useEffect0(() => {
+    Phoenix.getTimeLeft(channel, timeLeft => dispatch(UpdateTime(timeLeft)));
 
-      Phoenix.getSecret(channel, secret => dispatch(UpdateSecret(secret)));
-      None;
-    },
-    [||],
-  );
+    Phoenix.getSecret(channel, secret => dispatch(UpdateSecret(secret)));
+    None;
+  });
 
   React.useEffect0(() => {
     let timerId = Js.Global.setInterval(() => dispatch(Tick), 1000);
     dispatch(AddTimerId(timerId));
     Some(() => Js.Global.clearInterval(timerId));
   });
+
+  React.useEffect1(
+    () => {
+      let currentTime = Js.Date.make()->Js.Date.getTime->int_of_float;
+      if (abs(currentTime - state.lastUpdatedAt) > 2000) {
+        Js.log("Re-syncing time left");
+        Phoenix.getTimeLeft(channel, timeLeft =>
+          dispatch(UpdateTime(timeLeft))
+        );
+      };
+      None;
+    },
+    [|state.timeLeft|],
+  );
 
   let padSecondsString = secs => {
     switch (String.length(secs)) {
