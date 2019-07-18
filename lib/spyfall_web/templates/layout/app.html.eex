@@ -11,11 +11,11 @@
 
   <body class="bg-gray-200">
     <header>
-      <section class="container">
+      <section class=" container">
       </section>
     </header>
     <div
-         class="container mx-auto flex items-center align-center justify-center flex-wrap pt-4 h-screen">
+         class="container mx-auto flex items-center align-center justify-center flex-wrap pt-4 min-h-screen h-full">
       <div class="w-full mx-auto text-center">
         <main role="main">
           <%= render(@view_module, @view_template, assigns) %>

@@ -49,7 +49,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
             // set the lastUpdatedAt
             let currentTime = Js.Date.make()->Js.Date.getTime->int_of_float;
             let lastUpdatedAt =
-              if (abs(currentTime - state.lastUpdatedAt) > 2000) {
+              if (abs(currentTime - state.lastUpdatedAt) > 1400) {
                 state.lastUpdatedAt;
               } else {
                 Js.Date.make()->Js.Date.getTime->int_of_float;
@@ -103,7 +103,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
   React.useEffect1(
     () => {
       let currentTime = Js.Date.make()->Js.Date.getTime->int_of_float;
-      if (abs(currentTime - state.lastUpdatedAt) > 2000) {
+      if (abs(currentTime - state.lastUpdatedAt) > 1400) {
         Js.log("Re-syncing time left");
         Phoenix.getTimeLeft(channel, timeLeft =>
           dispatch(UpdateTime(timeLeft))
