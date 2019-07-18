@@ -41,7 +41,7 @@ let renderPlayers = (players: array(Player.t), channel) => {
 };
 
 [@react.component]
-let make = (~game: Game.t, ~player: Player.t) => {
+let make = (~game: Game.t) => {
   let channel =
     ChannelContextProvider.channelContext
     ->React.useContext

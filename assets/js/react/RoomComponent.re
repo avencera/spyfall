@@ -10,8 +10,8 @@ let make = (~game: Game.t, ~player: Player.t) => {
   switch (game.status, isPlayerInGame(game, player)) {
   | (_, false) =>
     <div> {React.string("You have been removed from this game!")} </div>
-  | (Waiting, true) => <WaitingRoomComponent game player />
-  | (InProgress, true) => <GameRoomComponent game player />
-  | (Ended, true) => <GameRoomComponent game player />
+  | (Waiting, true) => <WaitingRoomComponent game />
+  | (InProgress, true) => <GameRoomComponent game />
+  | (Finished, true) => <GameRoomComponent game />
   };
 };

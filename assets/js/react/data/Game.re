@@ -1,7 +1,7 @@
 type status =
   | Waiting
   | InProgress
-  | Ended;
+  | Finished;
 
 type t = {
   id: string,
@@ -15,8 +15,8 @@ let stringToStatus =
   fun
   | "waiting" => Waiting
   | "in_progress" => InProgress
-  | "ended" => Ended
-  | _ => Ended;
+  | "finished" => Finished
+  | _ => Finished;
 
 module Decode = {
   let gameDecoder = json =>
@@ -25,7 +25,7 @@ module Decode = {
       minutes: field("minutes", int, json),
       status: field("status", string, json)->stringToStatus,
       players: field("players", Player.Decode.players, json),
-      locations: field("locations", Location.Decode.locations, json)
+      locations: field("locations", Location.Decode.locations, json),
     };
 
   let game = gameDecoder;
