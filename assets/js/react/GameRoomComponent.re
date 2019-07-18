@@ -162,7 +162,7 @@ let make = (~game: Game.t, ~player: Player.t) => {
       <span
         onClick={_e => dispatch(ToggleSecretDisplay)}
         className="ml-4 underline text-xs cursor-pointer uppercase font-black flex mt-1 text-gray-800">
-        {React.string(state.displaySecret ? "show" : "hide")}
+        {React.string(state.displaySecret ? "hide" : "show")}
       </span>
     </div>;
   };
