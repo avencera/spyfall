@@ -8,6 +8,7 @@ defmodule Spyfall.MixProject do
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      releases: releases(),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -22,6 +23,15 @@ defmodule Spyfall.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  def releases() do
+    [
+      spyfall: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent]
+      ]
+    ]
+  end
 
   defp deps do
     [

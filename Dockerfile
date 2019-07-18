@@ -107,7 +107,7 @@ COPY lib /app/lib
 
 # create release
 RUN mkdir -p /opt/built &&\
-    mix release &&\
+    mix release ${APP_NAME} &&\
     cp -r _build/prod/rel/${APP_NAME} /opt/built
 
 ################################################################################
