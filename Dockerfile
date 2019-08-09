@@ -45,6 +45,7 @@ FROM node:10 AS asset-builder
 
 RUN mkdir /app
 WORKDIR /app
+ENV NODE_ENV=production
 
 # install latest version of yarn and bs-platform
 RUN npm i -g yarn
