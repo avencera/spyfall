@@ -65,6 +65,7 @@ RUN cd /app/assets && \
 # assets -- build assets
 COPY assets /app/assets
 RUN cd /app/assets && bsb -make-world -clean-world
+COPY lib/spyfall_web/templates/ /app/lib/spyfall_web/templates/
 RUN cd /app/assets && yarn deploy  
 
 
