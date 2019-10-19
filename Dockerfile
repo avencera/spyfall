@@ -50,6 +50,7 @@ ENV NODE_ENV=production
 # install latest version of yarn and bs-platform
 RUN npm i -g yarn
 RUN npm install -g bs-platform --unsafe-perm
+RUN npm link bs-platform
 
 COPY --from=deps-getter /app/assets /app/assets
 COPY --from=deps-getter /app/priv /app/priv
@@ -59,8 +60,7 @@ COPY --from=deps-getter /app/deps /app/deps
 COPY assets/package.json /app/assets/package.json
 COPY assets/yarn.lock /app/assets/yarn.lock
 RUN cd /app/assets && \
-    yarn install && \
-    npm link bs-platform
+    yarn install 
 
 # assets -- build assets
 COPY assets /app/assets
