@@ -16,6 +16,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "@glennsl/bs-json": "^5.0.1",
     "babel-loader": "^8.0.0",

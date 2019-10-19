@@ -45,6 +45,7 @@ FROM node:10 AS asset-builder
 
 RUN mkdir /app
 WORKDIR /app
+ENV NODE_ENV=production
 
 # install latest version of yarn and bs-platform
 RUN npm i -g yarn
@@ -64,6 +65,7 @@ RUN cd /app/assets && \
 # assets -- build assets
 COPY assets /app/assets
 RUN cd /app/assets && bsb -make-world -clean-world
+COPY lib/spyfall_web/templates/ /app/lib/spyfall_web/templates/
 RUN cd /app/assets && yarn deploy  
 
 
