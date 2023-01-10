@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "phoenix": "^1.4.10",
-    "phoenix_html": "^2.13.2",
+    "phoenix_html": "^3.0.4",
     "reason-react": "^0.7.0",
     "toastr": "^2.1.4"
   },
